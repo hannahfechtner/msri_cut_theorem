@@ -1,5 +1,5 @@
 import Mathlib.Data.Real.Basic
-
+--trying changes
 namespace sequent_calculus
 
 --Redefine the type of propositons since Prop is not inductively defined.
