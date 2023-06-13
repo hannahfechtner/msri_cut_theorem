@@ -135,7 +135,24 @@ theorem Hauptsatz (Γ : List PropForm) (A : PropForm) : (Γ ⊢ A) → (Γ ⊢�
   induction h 
   . apply Proof_CF.id 
   . apply Proof_CF.exfal
-  sorry 
+  . apply Proof_CF.com 
+    rename_i last
+    exact last
+  . apply Proof_CF.wek
+    rename_i last
+    exact last
+  . apply Proof_CF.contr
+    rename_i last
+    exact last
+  . apply Proof_CF.rimpl
+    rename_i last
+    exact last 
+  . apply Proof_CF.limpl
+    rename_i second_to last
+    exact second_to 
+    rename_i last
+    exact last
+  
   sorry
   sorry
   sorry
@@ -146,4 +163,5 @@ theorem Hauptsatz (Γ : List PropForm) (A : PropForm) : (Γ ⊢ A) → (Γ ⊢�
   sorry
   sorry
   sorry
+  rename_i gg bju j fho hui guigu hi
   sorry
