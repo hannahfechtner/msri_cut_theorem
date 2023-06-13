@@ -6,7 +6,7 @@ namespace sequent_calculus
 
 inductive PropForm : Type where
   | var : ℕ → PropForm 
---| var : Sring → PropForm
+--| var : String → PropForm
   | fls
   | impl : PropForm → PropForm → PropForm
   | conj : PropForm → PropForm → PropForm
@@ -117,8 +117,6 @@ def Size_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
 
 def Data {Γ : List PropForm} {A : PropForm} (D : Proof Γ A) : ℕ × ℕ := ⟨Size D, Size_Cut D⟩ 
 
-variable (x y : ℕ)
-#check (1 : Fin 2)
 --local notation for valid sequents
 
 infixl: 40 
@@ -145,11 +143,19 @@ example : Size modus_ponens = 3 := by trivial
 
 --More examples.
 
-example : [&0 ∨ &1, ¬ &0] ⊢ &1 := by
-  sorry
+theorem identity : [&0] ⊢ &0 := Proof.id 
 
-example : [&0 ∨ &1 ∧ &2] ⊢ (&0 ∨ &1) ∧ (&0 ∨ &2) := by 
-  sorry 
+example : Size identity = 0 := by trivial
+
+theorem modus_ponens : [&0 → &1, &0] ⊢ &1 := by 
+  apply Proof.limpl
+  . apply Proof.id 
+  . change [] ++ &1 :: [] ++ &0 :: [] ⊢ &1
+    apply Proof.com 
+    apply Proof.wek
+    apply Proof.id
+
+example : Size modus_ponens = 3 := by trivial 
 
 theorem disjunctive_syllogism : [&0 ∨ &1, ¬ &0] ⊢ &1 := by
   apply Proof.ldisj
