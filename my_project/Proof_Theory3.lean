@@ -168,7 +168,7 @@ theorem disjunctive_syllogism : [&0 ∨ &1, ¬ &0] ⊢ &1 := by
 
 example : Size disjunctive_syllogism = 7 := by trivial
 
-theorem distributativity: [] ⊢ &0 ∨ &1 ∧ &2 ↔ (&0 ∨ &1) ∧ (&0 ∨ &2) := by 
+theorem distributivity: [] ⊢ &0 ∨ &1 ∧ &2 ↔ (&0 ∨ &1) ∧ (&0 ∨ &2) := by 
   apply Proof.rconj
   . apply Proof.rimpl
     sorry
