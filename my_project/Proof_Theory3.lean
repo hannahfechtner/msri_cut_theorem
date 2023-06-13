@@ -148,20 +148,26 @@ theorem Hauptsatz (Γ : List PropForm) (A : PropForm) : (Γ ⊢ A) → (Γ ⊢�
     rename_i last
     exact last 
   . apply Proof_CF.limpl
-    rename_i second_to last
-    exact second_to 
+    . rename_i second_to last
+      exact second_to 
     rename_i last
     exact last
-  
+  . apply Proof_CF.rconj
+    . rename_i second_to last
+      exact second_to
+    rename_i last
+    exact last
+  . apply Proof_CF.lconjl
+    rename_i last
+    exact last
+  . apply Proof_CF.lconjr
+    rename_i last
+    exact last
+  . apply Proof_CF.rdisjl
+    rename_i last
+    exact last
+  . apply Proof_CF.rdisjr
+    rename_i last
+    exact last
   sorry
-  sorry
-  sorry
-  sorry
-  sorry
-  sorry
-  sorry
-  sorry
-  sorry
-  sorry
-  rename_i gg bju j fho hui guigu hi
   sorry
