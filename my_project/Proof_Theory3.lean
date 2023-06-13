@@ -258,9 +258,8 @@ theorem Hauptsatz (Γ : List PropForm) (A : PropForm) : (Γ ⊢ A) → (Γ ⊢�
     --this is false
   . sorry
     --this is impl
-  . rename_i six five four three
-    cases Gamma_A 
-    <;> sorry
+  . sorry
+    --only have the principal case to check -- no side cases
     --this is conj
   sorry
     --this is disj
