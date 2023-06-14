@@ -234,17 +234,19 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     rename_i last
     exact last
   -- here's the big one!
-  rename_i Gamma Gamma₁
-   C Gamma_A AGamma_C cfGamma_A cfAGamma_C
-  induction A
-  . sorry
+  
+  rename_i Δ CF B d e f g
+  induction CF
+  . rename_i N
+    sorry
   . sorry
     --this is false
-  . sorry
+  . rename_i CF₁ CF₂ h i
+    sorry
     --this is impl
-  . rename_i one two three four five
-    cases' Gamma_A
-    . rename_i A₁ A₂ D₁ D₂
+  . rename_i CF₁ CF₂ h i
+    cases' d
+    . 
       exact D₁ 
     . rename_i thing
       exact thing
@@ -270,5 +272,5 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
 
     --only have the principal case to check -- no side cases
     --this is conj
-  sorry
+  rename_i CF₁ CF₂ h i
     --this is disj
