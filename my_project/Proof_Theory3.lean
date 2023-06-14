@@ -264,7 +264,18 @@ theorem Hauptsatz (Γ : List PropForm) (A : PropForm) : (Γ ⊢ A) → (Γ ⊢�
     --this is false
   . sorry
     --this is impl
-  . sorry
+  . cases' two
+    . rename_i six five four three
+      exact (Proof_CF.contr one)
+    . apply Proof_CF.exfal
+    . rename_i twelve eleven ten nine eight seven six five four three
+      sorry
+      --exact (Proof_CF.com one)
+    . rename_i P Q R S five four three
+      sorry
+      --exact Hauptsatz three one
+    . rename_i P Q R S five four three
+      sorry
     --only have the principal case to check -- no side cases
     --this is conj
   sorry
