@@ -50,7 +50,7 @@ example : Complexity (¬ ((&0 ∧ &1) → &0)) = 3 := by trivial
 inductive Proof : List PropForm → PropForm → Type where
   | id : Proof [A] A
   | exfal : Proof [⊥] A
-  | com : Proof (Γ ++ A :: Δ ++ B :: θ) C →  Proof (Γ ++ B :: Δ ++ A :: θ) C 
+  | com : Proof (Γ ++ A :: Δ ++ B :: θ) C → Proof (Γ ++ B :: Δ ++ A :: θ) C 
   | wek : Proof Γ A → Proof (B :: Γ) A
   | contr : Proof (A :: A :: Γ) B → Proof (A :: Γ) B
   | rimpl : Proof (A :: Γ) B → Proof Γ (A → B)
@@ -80,7 +80,7 @@ inductive Proof_CF : List PropForm → PropForm → Type where
   | rdisjr : Proof_CF Γ B  → Proof_CF Γ (A ∨ B)
   | ldisj : Proof_CF (A :: Γ) C  → Proof_CF (B :: Γ) C → Proof_CF ((A ∨ B) :: Γ) C 
 
---Define size of a given proof tree, i.e., the number of inference rules used.
+--Define maximum cut depth of a given proof tree.
 
 def Depth_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
   | Proof.id => 0 
@@ -98,6 +98,8 @@ def Depth_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
   | Proof.ldisj D E => max (Depth_Cut D) (Depth_Cut E)
   | Proof.cut D E => max (Depth_Cut D) (Depth_Cut E) + 1
 
+--Define the sum of complexities of all cut formulas
+
 def Size_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
   | Proof.id => 0 
   | Proof.exfal => 0
@@ -113,6 +115,8 @@ def Size_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
   | Proof.rdisjr D => Size_Cut D
   | Proof.ldisj D E => Size_Cut D + Size_Cut E + 1 
   | @Proof.cut _ A _ D E => Size_Cut D + Size_Cut E + Complexity A
+
+--A measure to allow recursion on proof trees.
 
 def Data_Cut {Γ : List PropForm} {A : PropForm} (D : Proof Γ A) : ℕ × ℕ := ⟨Depth_Cut D, Size_Cut D⟩ 
 
@@ -185,8 +189,7 @@ theorem distributivity: [] ⊢ &0 ∨ &1 ∧ &2 ↔ (&0 ∨ &1) ∧ (&0 ∨ &2) 
           apply Proof.id
         . apply Proof.wek
           apply Proof.id     
-theorem strong_weaken {Γ Δ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ++ Δ  ⊢ A) := 
-  sorry
+
 --The main theorem.
 
 theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢₁ A) := by 
