@@ -265,8 +265,8 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
   . sorry
     --this is impl
   . cases' Gamma_A
-    . rename_i six five four three
-      exact (Proof_CF.contr one)
+    . rename_i A₁ A₂ D₁ D₂
+      exact (Proof_CF.contr cfAGamma_C)
     . apply Proof_CF.exfal
     . rename_i twelve eleven ten nine eight seven six five four three
       sorry
@@ -276,13 +276,16 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       --exact Hauptsatz three one
     . rename_i P Q R S five four three
       sorry
-    . rename_i other what Γ₁ E F D₁ D₂ four three
+    . rename_i A₁ A₂ Γ₁ E F D₁ D₂ four three
       apply Proof_CF.limpl
-      . exact D₁ 
-      
-      
+      . exact hauptsatz D₁ 
+      apply hauptsatz
+      apply Proof.cut (A:=A₁ ∧ A₂)
+      . sorry
       
 
+
+      
 
     . sorry
     . sorry
