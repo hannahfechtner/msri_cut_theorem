@@ -260,8 +260,10 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       . exact n 
       sorry
     . sorry
-    . sorry
-    . sorry
+    . apply Proof_CF.lconjl
+      sorry
+    . apply Proof_CF.lconjr
+      sorry
     . sorry
     sorry
     
