@@ -276,6 +276,14 @@ theorem Hauptsatz (Γ : List PropForm) (A : PropForm) : (Γ ⊢ A) → (Γ ⊢�
       --exact Hauptsatz three one
     . rename_i P Q R S five four three
       sorry
+    . sorry
+    . sorry
+    . sorry
+    . sorry
+    . sorry
+    
+    
+
     --only have the principal case to check -- no side cases
     --this is conj
   sorry
