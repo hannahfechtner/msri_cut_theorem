@@ -248,20 +248,17 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     cases' d 
     . exact Proof_CF.contr g
     . apply Proof_CF.exfal
-    . rename_i last_one
-      apply Proof_CF.com
-      sorry 
-      --exact (Proof_CF.com one)
-    . rename_i P 
-      sorry
-      --exact Hauptsatz three one
-    . rename_i P 
-      sorry
-    . rename_i  E F D₁ D₂ four
-      sorry
     . sorry
     . sorry
     . sorry
+    . apply Proof_CF.limpl
+      . rename_i j k l m n
+        exact (hauptsatz m)
+      rename_i j k l m n
+      apply hauptsatz
+      apply Proof.cut (A:= CF₁ ∧ CF₂) 
+      . exact n 
+      sorry
     . sorry
     . sorry
     . sorry
