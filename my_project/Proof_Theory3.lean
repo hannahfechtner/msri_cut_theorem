@@ -242,21 +242,17 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     rename_i last
     exact last
   -- here's the big one!
-  rename_i Gamma A B Gamma_A AGamma_B two one
+  rename_i Gamma A C Gamma_A AGamma_C cfGamma_A cfAGamma_C
   induction A
   . sorry
     --this is Var(A) 
   . sorry
     --this is false
-  . cases Gamma_A
-    . apply Proof_CF.contr one
-    . apply Proof_CF.exfal
-    . sorry
-    . rename_i P Q a b c d e
-      
-  . cases' two
-    . rename_i six five four three
-      exact (Proof_CF.contr one)
+  . sorry
+    --this is impl
+  . cases' Gamma_A
+    . rename_i A₁ A₂ D₁ D₂
+      exact (Proof_CF.contr cfAGamma_C)
     . apply Proof_CF.exfal
     . rename_i twelve eleven ten nine eight seven six five four three
       sorry
@@ -266,7 +262,17 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       --exact Hauptsatz three one
     . rename_i P Q R S five four three
       sorry
-    . sorry
+    . rename_i A₁ A₂ Γ₁ E F D₁ D₂ four three
+      apply Proof_CF.limpl
+      . exact hauptsatz D₁ 
+      apply hauptsatz
+      apply Proof.cut (A:=A₁ ∧ A₂)
+      . sorry
+      
+
+
+      
+
     . sorry
     . sorry
     . sorry
