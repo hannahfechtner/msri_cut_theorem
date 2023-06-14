@@ -248,30 +248,70 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     sorry
     --this is impl
   . rename_i CF₁ CF₂ h i
-    cases' d 
-    . exact Proof_CF.contr g
-    . apply Proof_CF.exfal
-    . sorry
-    . sorry
-    . sorry
-    . apply Proof_CF.limpl
-      . rename_i j k l m n
-        exact (hauptsatz m)
-      rename_i j k l m n
-      apply hauptsatz
-      apply Proof.cut (A:= CF₁ ∧ CF₂) 
-      . exact n 
+    cases' d
+    . 
+      exact D₁ 
+    . rename_i thing
+      exact thing
+    . rename_i twelve
+      sorry
+      --exact (Proof_CF.com one)
+    . rename_i P 
+      sorry
+      --exact Hauptsatz three one
+    . rename_i P 
+      sorry
+    . rename_i A₁ A₂ Γ₁ E F D₁ D₂ four
       sorry
     . sorry
-    . apply Proof_CF.lconjl
-      sorry
-    . apply Proof_CF.lconjr
-      sorry
+    . sorry
+    . sorry
+    . sorry
+    . sorry
+    . sorry
     . sorry
     sorry
     
 
     --only have the principal case to check -- no side cases
     --this is conj
-  rename_i CF₁ CF₂ h i
+  . rename_i CF₁ CF₂ h i
+    cases' d
+    . exact Proof_CF.contr g
+    . exact Proof_CF.exfal
+    . rename_i G X H Y I a
+      apply hauptsatz (Proof.cut (Proof.com a) e)
+    . rename_i G X a
+      apply hauptsatz (Proof.cut (Proof.wek a) e)
+
+    . rename_i X G a
+      apply hauptsatz (Proof.cut (Proof.contr a) e)
+
+    . rename_i G X Y a b 
+      apply hauptsatz (Proof.cut (Proof.limpl a b) e)
+
+    . rename_i X G Y a
+      apply hauptsatz (Proof.cut (Proof.lconjl a) e)
+
+    . rename_i X G Y a
+      apply hauptsatz (Proof.cut (Proof.lconjr a) e)
+
+    . rename_i a
+      apply hauptsatz (Proof.cut (Proof.rdisjl a) e)
+      
+    . rename_i a
+      apply hauptsatz (Proof.cut (Proof.rdisjr a) e)
+
+    . rename_i X G Y a b
+      apply hauptsatz (Proof.cut (Proof.ldisj a b) e)
+
+
+    . rename_i X a b
+      sorry
+      --cases' Δ
+       
+      
+      
+
+
     --this is disj
