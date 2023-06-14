@@ -61,7 +61,7 @@ inductive Proof : List PropForm → PropForm → Type where
   | rdisjl : Proof Γ A  → Proof Γ (A ∨ B)
   | rdisjr : Proof Γ B  → Proof Γ (A ∨ B)
   | ldisj : Proof (A :: Γ) C  → Proof (B :: Γ) C → Proof ((A ∨ B) :: Γ) C 
-  | cut : Proof Γ A →  Proof (A :: Γ) B → Proof Γ B 
+  | cut : Proof Γ₀ A →  Proof (A :: Γ₁) B → Proof (Γ₀ ++ Γ₁) B 
 
 --Define cut-free proof trees.
 
@@ -112,7 +112,7 @@ def Size_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
   | Proof.rdisjl D => Size D
   | Proof.rdisjr D => Size D
   | Proof.ldisj D E => Size D + Size E
-  | @Proof.cut Γ B A D E => Size D + Size E + Complexity B
+  | @Proof.cut _ A _ _ D E => Size D + Size E + Complexity A
 
 
 def Data {Γ : List PropForm} {A : PropForm} (D : Proof Γ A) : ℕ × ℕ := ⟨Size D, Size_Cut D⟩ 
@@ -142,18 +142,6 @@ theorem modus_ponens : [&0 → &1, &0] ⊢ &1 := by
 example : Size modus_ponens = 3 := by trivial 
 
 --More examples.
-
-theorem identity : [&0] ⊢ &0 := Proof.id 
-
-example : Size identity = 0 := by trivial
-
-theorem modus_ponens : [&0 → &1, &0] ⊢ &1 := by 
-  apply Proof.limpl
-  . apply Proof.id 
-  . change [] ++ &1 :: [] ++ &0 :: [] ⊢ &1
-    apply Proof.com 
-    apply Proof.wek
-    apply Proof.id
 
 example : Size modus_ponens = 3 := by trivial 
 
@@ -205,9 +193,7 @@ theorem distributivity: [] ⊢ &0 ∨ &1 ∧ &2 ↔ (&0 ∨ &1) ∧ (&0 ∨ &2) 
           apply Proof.wek
           apply Proof.id
         . apply Proof.wek
-          apply Proof.id
-
-example : Size distributativity = 18 := by sorry     
+          apply Proof.id     
 
 --The main theorem.
 
