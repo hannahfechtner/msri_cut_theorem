@@ -61,7 +61,7 @@ inductive Proof : List PropForm → PropForm → Type where
   | rdisjl : Proof Γ A  → Proof Γ (A ∨ B)
   | rdisjr : Proof Γ B  → Proof Γ (A ∨ B)
   | ldisj : Proof (A :: Γ) C  → Proof (B :: Γ) C → Proof ((A ∨ B) :: Γ) C 
-  | cut : Proof Γ₀ A →  Proof (A :: Γ₁) B → Proof (Γ₀ ++ Γ₁) B 
+  | cut : Proof Γ A →  Proof (A :: Γ) B → Proof Γ B 
 
 --Define cut-free proof trees.
 
@@ -82,40 +82,39 @@ inductive Proof_CF : List PropForm → PropForm → Type where
 
 --Define size of a given proof tree, i.e., the number of inference rules used.
 
-def Size {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
+def Depth_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
   | Proof.id => 0 
   | Proof.exfal => 0
-  | Proof.com D => Size D + 1
-  | Proof.wek D => Size D + 1 
-  | Proof.contr D => Size D + 1
-  | Proof.rimpl D => Size D + 1
-  | Proof.limpl D E => Size D + Size E + 1
-  | Proof.rconj D E => Size D + Size E + 1
-  | Proof.lconjl D => Size D +1 
-  | Proof.lconjr D => Size D +1 
-  | Proof.rdisjl D => Size D +1 
-  | Proof.rdisjr D => Size D +1 
-  | Proof.ldisj D E => Size D + Size E + 1 
-  | Proof.cut D E => Size D + Size E + 1
+  | Proof.com D => Depth_Cut D
+  | Proof.wek D => Depth_Cut D
+  | Proof.contr D => Depth_Cut D
+  | Proof.rimpl D => Depth_Cut D
+  | Proof.limpl D E => max (Depth_Cut D) (Depth_Cut E)
+  | Proof.rconj D E => max (Depth_Cut D) (Depth_Cut E)
+  | Proof.lconjl D => Depth_Cut D
+  | Proof.lconjr D => Depth_Cut D
+  | Proof.rdisjl D => Depth_Cut D
+  | Proof.rdisjr D => Depth_Cut D
+  | Proof.ldisj D E => max (Depth_Cut D) (Depth_Cut E)
+  | Proof.cut D E => max (Depth_Cut D) (Depth_Cut E) + 1
 
 def Size_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
   | Proof.id => 0 
   | Proof.exfal => 0
-  | Proof.com D => Size D
-  | Proof.wek D => Size D
-  | Proof.contr D => Size D
-  | Proof.rimpl D => Size D
-  | Proof.limpl D E => Size D + Size E
-  | Proof.rconj D E => Size D + Size E
-  | Proof.lconjl D => Size D
-  | Proof.lconjr D => Size D
-  | Proof.rdisjl D => Size D
-  | Proof.rdisjr D => Size D
-  | Proof.ldisj D E => Size D + Size E
-  | @Proof.cut _ A _ _ D E => Size D + Size E + Complexity A
+  | Proof.com D => Size_Cut D 
+  | Proof.wek D => Size_Cut D
+  | Proof.contr D => Size_Cut D
+  | Proof.rimpl D => Size_Cut D
+  | Proof.limpl D E => Size_Cut D + Size_Cut E
+  | Proof.rconj D E => Size_Cut D + Size_Cut E
+  | Proof.lconjl D => Size_Cut D
+  | Proof.lconjr D => Size_Cut D
+  | Proof.rdisjl D => Size_Cut D 
+  | Proof.rdisjr D => Size_Cut D
+  | Proof.ldisj D E => Size_Cut D + Size_Cut E + 1 
+  | @Proof.cut _ A _ D E => Size_Cut D + Size_Cut E + Complexity A
 
-
-def Data {Γ : List PropForm} {A : PropForm} (D : Proof Γ A) : ℕ × ℕ := ⟨Size D, Size_Cut D⟩ 
+def Data_Cut {Γ : List PropForm} {A : PropForm} (D : Proof Γ A) : ℕ × ℕ := ⟨Depth_Cut D, Size_Cut D⟩ 
 
 --local notation for valid sequents
 
@@ -129,8 +128,6 @@ infixl: 40
 
 theorem identity : [&0] ⊢ &0 := Proof.id 
 
-example : Size identity = 0 := by trivial
-
 theorem modus_ponens : [&0 → &1, &0] ⊢ &1 := by 
   apply Proof.limpl
   . apply Proof.id 
@@ -139,11 +136,7 @@ theorem modus_ponens : [&0 → &1, &0] ⊢ &1 := by
     apply Proof.wek
     apply Proof.id
 
-example : Size modus_ponens = 3 := by trivial 
-
 --More examples.
-
-example : Size modus_ponens = 3 := by trivial 
 
 theorem disjunctive_syllogism : [&0 ∨ &1, ¬ &0] ⊢ &1 := by
   apply Proof.ldisj
@@ -159,8 +152,6 @@ theorem disjunctive_syllogism : [&0 ∨ &1, ¬ &0] ⊢ &1 := by
     apply Proof.com
     apply Proof.wek
     apply Proof.id
-
-example : Size disjunctive_syllogism = 7 := by trivial
 
 theorem distributivity: [] ⊢ &0 ∨ &1 ∧ &2 ↔ (&0 ∨ &1) ∧ (&0 ∨ &2) := by 
   apply Proof.rconj
