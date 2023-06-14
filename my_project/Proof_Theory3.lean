@@ -282,11 +282,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       apply hauptsatz
       apply Proof.cut (A:=A₁ ∧ A₂)
       . sorry
-      
-
-
-      
-
+      sorry
     . sorry
     . sorry
     . sorry
