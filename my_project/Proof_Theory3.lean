@@ -256,7 +256,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     rename_i last
     exact last
   -- here's the big one!
-  rename_i Gamma A B Gamma_A AGamma_B two one
+  rename_i Gamma A C Gamma_A AGamma_C two one
   induction A
   . sorry
     --this is Var(A) 
@@ -276,7 +276,14 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       --exact Hauptsatz three one
     . rename_i P Q R S five four three
       sorry
-    . sorry
+    . rename_i other what Γ₁ E F D₁ D₂ four three
+      apply Proof_CF.limpl
+      . exact D₁ 
+      
+      
+      
+
+
     . sorry
     . sorry
     . sorry
