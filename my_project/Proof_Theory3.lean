@@ -211,7 +211,7 @@ example : Size distributativity = 18 := by sorry
 
 --The main theorem.
 
-theorem Hauptsatz (Γ : List PropForm) (A : PropForm) : (Γ ⊢ A) → (Γ ⊢₁ A) := by 
+theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢₁ A) := by 
   intro h
   induction h 
   . apply Proof_CF.id 
