@@ -185,7 +185,8 @@ theorem distributivity: [] ⊢ &0 ∨ &1 ∧ &2 ↔ (&0 ∨ &1) ∧ (&0 ∨ &2) 
           apply Proof.id
         . apply Proof.wek
           apply Proof.id     
-
+theorem strong_weaken {Γ Δ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ++ Δ  ⊢ A) := 
+  sorry
 --The main theorem.
 
 theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢₁ A) := by 
@@ -237,35 +238,34 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
    C Gamma_A AGamma_C cfGamma_A cfAGamma_C
   induction A
   . sorry
-    --this is Var(A) 
   . sorry
     --this is false
   . sorry
     --this is impl
-  . cases' Gamma_A
+  . rename_i one two three four five
+    cases' Gamma_A
     . rename_i A₁ A₂ D₁ D₂
-      exact (Proof_CF.contr cfAGamma_C)
-    . apply Proof_CF.exfal
-    . rename_i twelve eleven ten nine eight seven six five four three
+      exact D₁ 
+    . rename_i thing
+      exact thing
+    . rename_i twelve
       sorry
       --exact (Proof_CF.com one)
-    . rename_i P Q R S five four three
+    . rename_i P 
       sorry
       --exact Hauptsatz three one
-    . rename_i P Q R S five four three
+    . rename_i P 
       sorry
-    . rename_i A₁ A₂ Γ₁ E F D₁ D₂ four three
-      apply Proof_CF.limpl
-      . exact hauptsatz D₁ 
-      apply hauptsatz
-      apply Proof.cut (A:=A₁ ∧ A₂)
-      . sorry
+    . rename_i A₁ A₂ Γ₁ E F D₁ D₂ four
       sorry
     . sorry
     . sorry
     . sorry
     . sorry
-    
+    . sorry
+    . sorry
+    . sorry
+    sorry
     
 
     --only have the principal case to check -- no side cases
