@@ -240,41 +240,51 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
   
   rename_i Δ CF B d e f g
   induction CF
+    -- here below is the Var case
   . rename_i N
     sorry
+    -- here below is the bot case
   . sorry
-    --this is false
+    -- here below is the impl case
   . rename_i CF₁ CF₂ h i
     sorry
-    --this is impl
+    -- here below is the conj case
   . rename_i CF₁ CF₂ h i
     cases' d
-    . 
-      exact D₁ 
-    . rename_i thing
-      exact thing
-    . rename_i twelve
+    . exact Proof_CF.contr g
+    . exact Proof_CF.exfal
+    . rename_i G X H Y I a
+      apply hauptsatz (Proof.cut (Proof.com a) e)
+    . rename_i G X a
+      apply hauptsatz (Proof.cut (Proof.wek a) e)
+    . rename_i X G a
+      apply hauptsatz (Proof.cut (Proof.contr a) e)
+    . rename_i G X Y a b 
+      apply hauptsatz (Proof.cut (Proof.limpl a b) e) 
+    . rename_i Y a
+      apply hauptsatz 
+      -- apply (Proof.cut (Proof.lconjl _) e)
       sorry
-      --exact (Proof_CF.com one)
-    . rename_i P 
+    . rename_i X G Y a
+      apply hauptsatz 
+      -- apply (Proof.cut (Proof.lconjr a) e)
       sorry
-      --exact Hauptsatz three one
-    . rename_i P 
+    . rename_i a
+      apply hauptsatz 
+      -- apply (Proof.cut (Proof.rdisjl a) e)
       sorry
-    . rename_i A₁ A₂ Γ₁ E F D₁ D₂ four
+    . rename_i a
+      apply hauptsatz 
+      -- apply (Proof.cut (Proof.rdisjr a) e)
       sorry
-    . sorry
-    . sorry
-    . sorry
-    . sorry
-    . sorry
-    . sorry
-    . sorry
-    sorry
+    . rename_i Y a b
+      apply hauptsatz 
+      -- apply (Proof.cut (Proof.ldisj a b) e)
+      sorry
+
     
 
-    --only have the principal case to check -- no side cases
-    --this is conj
+    --here below is the disj case
   . rename_i CF₁ CF₂ h i
     cases' d
     . exact Proof_CF.contr g
@@ -305,13 +315,5 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . rename_i X G Y a b
       apply hauptsatz (Proof.cut (Proof.ldisj a b) e)
 
-
     . rename_i X a b
       sorry
-      --cases' Δ
-       
-      
-      
-
-
-    --this is disj
