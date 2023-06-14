@@ -242,7 +242,8 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     rename_i last
     exact last
   -- here's the big one!
-  rename_i Gamma A C Gamma_A AGamma_C cfGamma_A cfAGamma_C
+  rename_i Gamma Gamma₁
+   C Gamma_A AGamma_C cfGamma_A cfAGamma_C
   induction A
   . sorry
     --this is Var(A) 
