@@ -264,9 +264,9 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . rename_i X Y
       apply hauptsatz 
       sorry
-    . rename_i X G Y a
+    . rename_i Z a Y c 
       apply hauptsatz 
-      sorry
+      apply (Proof.cut (Proof.lconjl c) e) 
     . rename_i Z a Y c 
       apply hauptsatz 
       apply (Proof.cut (Proof.lconjr c) e) 
