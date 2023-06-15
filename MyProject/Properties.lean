@@ -1,63 +1,53 @@
 import MyProject.Definitions
 
---Some examples.
+open sequent_calculus
 
 theorem identity : [&0] ⊢ &0 := Proof.id 
 
 theorem modus_ponens : [&0 → &1, &0] ⊢ &1 := by 
   apply Proof.limpl
   . apply Proof.id 
-  . change [] ++ &1 :: [] ++ &0 :: [] ⊢ &1
-    apply Proof.com 
-    apply Proof.wek
+  . change [] ++ [&1] ++ [] ++ [&0] ++ [] ⊢ &1
+    apply Proof.com
+    apply Proof.wek [&0]
     apply Proof.id
-
---More examples.
 
 theorem disjunctive_syllogism : [&0 ∨ &1, ¬ &0] ⊢ &1 := by
   apply Proof.ldisj
-  . change [] ++ &0 :: [] ++ (¬ &0) :: [] ⊢ &1
-    apply Proof.com
+  . apply @Proof.com [] [] [] _ [_] [_] 
     apply Proof.limpl
     . apply Proof.id
-    . change [] ++ fls :: [] ++ &0 :: [] ⊢ &1
-      apply Proof.com 
-      apply Proof.wek
+    . apply @Proof.com [] [] [] _ [_] [_] 
+      apply Proof.wek [&0]
       apply Proof.exfal
-  . change [] ++ &1 :: [] ++ (¬ &0) :: [] ⊢ &1
-    apply Proof.com
-    apply Proof.wek
+  . apply @Proof.com [] [] [] _ [_] [_] 
+    apply Proof.wek [¬ &0]
     apply Proof.id
-
+    
 theorem distributivity: [] ⊢ &0 ∨ &1 ∧ &2 ↔ (&0 ∨ &1) ∧ (&0 ∨ &2) := by 
   apply Proof.rconj
   . apply Proof.rimpl
     sorry
   . apply Proof.rimpl
-    apply Proof.contr
+    apply Proof.contr [( & 0 ∨ & 1) ∧ ( & 0 ∨ & 2)]
     apply Proof.lconjl
-    change [] ++ (&0 ∨ &1) :: [] ++ ((&0 ∨ &1) ∧ (&0 ∨ &2)) :: _ ⊢ _
-    apply Proof.com
+    apply @Proof.com [] [] [] _ [_] [_] 
     apply Proof.lconjr
     apply Proof.ldisj 
     . apply Proof.rdisjl 
-      change [] ++ &0 :: [] ++ (&0 ∨ &1) :: _ ⊢ _
-      apply Proof.com
-      apply Proof.wek
+      apply @Proof.com [] [] [] _ [_] [_] 
+      apply Proof.wek [& 0 ∨ & 1]
       apply Proof.id
-    . change [] ++ &2 :: [] ++ (&0 ∨ &1) :: _ ⊢ _
-      apply Proof.com
+    . apply @Proof.com [] [] [] _ [_] [_] 
       apply Proof.ldisj
       . apply Proof.rdisjl
-        change [] ++ &0 :: [] ++ &2 :: _ ⊢ _
-        apply Proof.com
-        apply Proof.wek
+        apply @Proof.com [] [] [] _ [_] [_] 
+        apply Proof.wek [&2]
         apply Proof.id
       . apply Proof.rdisjr 
         apply Proof.rconj
-        . change [] ++ &1 :: [] ++ &2 :: _ ⊢ _
-          apply Proof.com
-          apply Proof.wek
+        . apply @Proof.com [] [] [] _ [_] [_] 
+          apply Proof.wek [&2]
           apply Proof.id
-        . apply Proof.wek
-          apply Proof.id     
+        . apply Proof.wek [&1]
+          apply Proof.id

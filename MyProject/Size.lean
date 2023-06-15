@@ -1,5 +1,9 @@
 import MyProject.Definitions
 
+open sequent_calculus
+
+--A measure to allow recursion on proof trees.
+
 --Define maximum cut depth of a given proof tree.
 
 def Depth_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ

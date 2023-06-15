@@ -1,7 +1,6 @@
 import MyProject.Definitions
-import MyProject.Lemma
-import MyProject.Properties
-import MyProject.Size
+
+open sequent_calculus
 
 theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢₁ A) := by 
   intro h
@@ -49,7 +48,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     exact last
   -- here's the big one!
   
-  rename_i Δ CF B d e f g
+  rename_i Γ₀ Γ₁ CF B d e f g
   induction CF
     -- here below is the Var case
   . rename_i N
