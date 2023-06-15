@@ -81,6 +81,12 @@ inductive Proof_CF : List PropForm → PropForm → Type where
   | rdisjr : Proof_CF Γ B  → Proof_CF Γ (A ∨ B)
   | ldisj : Proof_CF (A :: Γ) C  → Proof_CF (B :: Γ) C → Proof_CF ((A ∨ B) :: Γ) C 
 
+--local notation for valid sequents
+
+infixl: 40 " ⊢ " => Proof
+
+infixl: 40 " ⊢₁ " => Proof_CF
+
 --Define maximum cut depth of a given proof tree.
 
 def Depth_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
@@ -119,17 +125,10 @@ def Size_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
 
 --A measure to allow recursion on proof trees.
 
-def Data_Cut {Γ : List PropForm} {A : PropForm} (D : Proof Γ A) : ℕ × ℕ := ⟨Depth_Cut D, Size_Cut D⟩ 
+-- def Data_Cut {Γ : List PropForm} {A : PropForm} (D : Proof Γ A) : ℕ × ℕ := ⟨Depth_Cut D, Size_Cut D⟩ 
 --Canonical embedding from Proof_CF to Proof.
 
-def CF_to_C {Γ : List PropForm} {A : PropForm} : Proof_CF → Proof 
+-- def CF_to_C {Γ : List PropForm} {A : PropForm} : Proof_CF → Proof 
   --| Proof_CF.id => Proof.id 
-  sorry
-
---local notation for valid sequents
-
-infixl: 40 
-  " ⊢ " => Proof
-
-infixl: 40 
-   " ⊢₁ " => Proof_CF
+  --sorry
+  --done
