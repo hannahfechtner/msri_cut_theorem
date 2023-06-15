@@ -85,8 +85,8 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     
     -- here below is the bot case
   . cases' d
-    . exact Proof_CF.contr g 
-    . exact Proof_CF.exfal
+    . exact g --done
+    . exact g --done
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
     . rename_i G X a
@@ -110,8 +110,8 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     -- here below is the impl case
   . rename_i CF₁ CF₂ h i
     cases' d
-    . exact Proof_CF.contr g 
-    . exact Proof_CF.exfal
+    . exact g --done
+    . apply Proof_CF.exfal 
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
     . rename_i G X a
@@ -137,7 +137,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     -- here below is the conj case
   . rename_i CF₁ CF₂ h i
     cases' d
-    . exact Proof_CF.contr g
+    . exact g --done
     . exact Proof_CF.exfal
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
@@ -166,7 +166,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     --here below is the disj case
   . rename_i CF₁ CF₂ h i
     cases' d
-    . exact Proof_CF.contr g
+    . exact g
     . exact Proof_CF.exfal
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
