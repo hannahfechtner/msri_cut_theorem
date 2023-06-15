@@ -82,8 +82,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       simp at this
       assumption
     . rename_i G X Y a b 
-      
-      apply hauptsatz (Proof.cut (Proof.limpl a b) e) 
+      have := hauptsatz (Proof.cut b e) 
     . rename_i Z a Y c 
       apply hauptsatz 
       apply (Proof.cut (Proof.lconjl c) e)
