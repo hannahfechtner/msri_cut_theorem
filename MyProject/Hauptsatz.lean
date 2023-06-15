@@ -57,7 +57,10 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . assumption
     . suffices : [] ++ [PropForm.fls] ++ [] ++ Γ₁ ++ [] ⊢₁ B
       · simpa using this
-      sorry 
+      . apply Proof_CF.com 
+        simp
+        apply Proof_CF.wek
+        apply Proof_CF.exfal
       --have this : [] ++ [PropForm.fls] ++ [] ++ Γ₁ ++ [] = [PropForm.fls] ++ Γ₁ := by
         --simp
       --rw [← this]
@@ -85,8 +88,8 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     
     -- here below is the bot case
   . cases' d
-    . exact g --done
-    . exact g --done
+    . exact Proof_CF.contr g 
+    . exact Proof_CF.exfal
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
     . rename_i G X a
@@ -110,8 +113,8 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     -- here below is the impl case
   . rename_i CF₁ CF₂ h i
     cases' d
-    . exact g --done
-    . apply Proof_CF.exfal 
+    . exact Proof_CF.contr g 
+    . exact Proof_CF.exfal
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
     . rename_i G X a
@@ -137,7 +140,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     -- here below is the conj case
   . rename_i CF₁ CF₂ h i
     cases' d
-    . exact g --done
+    . exact Proof_CF.contr g
     . exact Proof_CF.exfal
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
@@ -166,7 +169,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     --here below is the disj case
   . rename_i CF₁ CF₂ h i
     cases' d
-    . exact g
+    . exact Proof_CF.contr g
     . exact Proof_CF.exfal
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
