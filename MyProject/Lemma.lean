@@ -1,6 +1,10 @@
 import MyProject.Definitions
 open sequent_calculus
 
+theorem EX_more {Γ : List PropForm} {A : PropForm} : ⊥ :: Γ ⊢₁ A := by sorry
+
+  
+
 theorem CF_Regular {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ ⊢ A) := by 
   intro h
   induction h
