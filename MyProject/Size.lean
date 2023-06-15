@@ -42,4 +42,18 @@ def Size_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
 
 --A measure to allow recursion on proof trees.
 
-def Data_Cut {Γ : List PropForm} {A : PropForm} (D : Proof Γ A) : ℕ × ℕ := ⟨Depth_Cut D, Size_Cut D⟩ 
+def Data_Cut {Γ : List PropForm} {A : PropForm} (D : Proof Γ A) : ℕ × ℕ := (Depth_Cut D, Size_Cut D) 
+
+
+def less_than (A B : ℕ × ℕ) : Prop := 
+  Or (A.1<B.1) (And (A.1=B.1)  (A.2 < B.1))
+
+example : less_than (0,2) (1,1) := by 
+  left
+  norm_num 
+
+example : less_than (1,0) (1,1) := by 
+  right
+  norm_num 
+
+infix: 30 "≺" => less_than
