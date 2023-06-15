@@ -89,7 +89,12 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
         simp
         apply Proof_CF.wek
         exact hauptsatz a
-       
+      apply hauptsatz
+      have thing: Y :: List.append G Γ₁= ([Y]++G) ++Γ₁ := by simp
+      rw [thing]
+      apply Proof.cut (A:= &N) 
+      . apply b 
+      apply e
     . rename_i Z a Y c 
       apply hauptsatz 
       apply (Proof.cut (Proof.lconjl c) e)
