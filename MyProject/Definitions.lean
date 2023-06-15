@@ -46,7 +46,7 @@ infixl: 52 " ∨ " => disj
 
 infixl: 50 " ↔ " => fun (A B : PropForm) => conj (impl A B) (impl B A)
 
-example : Complexity (¬ ((&0 ∧ &1) → &0)) = 3 := by trivial      
+example : Complexity (¬ ((&0 ∧ &1) → &0)) = 4 := by trivial      
 
 --Define proof tree of a given sequent Γ ⊢ A inductively, using sequnent calculus.
 
