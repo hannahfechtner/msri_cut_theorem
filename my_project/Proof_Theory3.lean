@@ -267,10 +267,56 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       sorry
     
     -- here below is the bot case
-  . sorry
+  . cases' d
+    . exact Proof_CF.contr g 
+    . exact Proof_CF.exfal
+    . rename_i G X H Y I a
+      apply hauptsatz (Proof.cut (Proof.com a) e)
+    . rename_i G X a
+      apply hauptsatz (Proof.cut (Proof.wek a) e)
+    . rename_i X G a
+      apply hauptsatz (Proof.cut (Proof.contr a) e)
+    . rename_i G X Y a b 
+      apply hauptsatz (Proof.cut (Proof.limpl a b) e) 
+    . rename_i Z a Y c 
+      apply hauptsatz 
+      apply (Proof.cut (Proof.lconjl c) e)
+    . rename_i Z a Y c 
+      apply hauptsatz 
+      apply (Proof.cut (Proof.lconjr c) e) 
+    . rename_i X Y a b c
+      apply hauptsatz 
+      apply (Proof.cut (Proof.ldisj b c) e)
+    . rename_i Y a b
+      apply hauptsatz 
+      sorry
     -- here below is the impl case
   . rename_i CF₁ CF₂ h i
-    sorry
+    cases' d
+    . exact Proof_CF.contr g 
+    . exact Proof_CF.exfal
+    . rename_i G X H Y I a
+      apply hauptsatz (Proof.cut (Proof.com a) e)
+    . rename_i G X a
+      apply hauptsatz (Proof.cut (Proof.wek a) e)
+    . rename_i X G a
+      apply hauptsatz (Proof.cut (Proof.contr a) e)
+    . rename_i a
+      apply hauptsatz (Proof.cut (Proof.rimpl a) e) 
+    . rename_i  Y a b 
+      apply hauptsatz (Proof.cut (Proof.limpl a b) e) 
+    . rename_i Z a Y c 
+      apply hauptsatz 
+      apply (Proof.cut (Proof.lconjl c) e)
+    . rename_i Z a Y c 
+      apply hauptsatz 
+      apply (Proof.cut (Proof.lconjr c) e) 
+    . rename_i X Y a b c
+      apply hauptsatz 
+      apply (Proof.cut (Proof.ldisj b c) e)
+    . rename_i Y a b
+      apply hauptsatz 
+      sorry
     -- here below is the conj case
   . rename_i CF₁ CF₂ h i
     cases' d
