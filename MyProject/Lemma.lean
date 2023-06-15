@@ -1,9 +1,23 @@
 import MyProject.Definitions
 open sequent_calculus
 
-theorem EX_more {Γ : List PropForm} {A : PropForm} : ⊥ :: Γ ⊢₁ A := by sorry
+theorem EX_more {Γ : List PropForm} {A : PropForm} : (⊥ :: Γ ⊢₁ A) := by
+  have this : [] ++ [PropForm.fls] ++ [] ++ Γ ++ [] = PropForm.fls :: Γ := by
+    simp
+  rw [← this]
+  apply Proof_CF.com
+  simp
+  apply Proof_CF.wek
+  apply Proof_CF.exfal
 
-  
+theorem transport_CF {Γ Δ : List PropForm} {A : PropForm} : (Γ ++ Δ  ⊢₁ A) → (Δ ++ Γ ⊢₁ A)  := by
+  intro h
+  have this : [] ++ Δ  ++ [] ++ Γ  ++ [] = Δ  ++ Γ := by
+    simp
+  rw [← this]
+  apply Proof_CF.com
+  simp
+  assumption
 
 theorem CF_Regular {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ ⊢ A) := by 
   intro h
