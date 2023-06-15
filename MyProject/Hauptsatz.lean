@@ -173,7 +173,9 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . rename_i G X Y a b 
       apply hauptsatz (Proof.cut (Proof.limpl a b) e) 
     . rename_i X Y
-      apply hauptsatz 
+      have thing: ((CF₁ ∧ CF₂) :: Γ₁) = ([] ++ [CF₁ ∧ CF₂] ++ [] ++ Γ₁ ++ []) := by simp
+      rw [thing] at e
+      cases' e 
       sorry
     . rename_i Z a Y c 
       apply hauptsatz 
