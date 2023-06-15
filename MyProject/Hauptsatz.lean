@@ -48,13 +48,14 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     exact last
   -- here's the big one!
   
-  rename_i Γ₀ Γ₁ CF B d e f g
+  rename_i Γ₀ CF Γ₁ B d e f g
   induction CF
     -- here below is the Var case
   . rename_i N
     cases' d
-    . exact Proof_CF.contr g 
-    . exact Proof_CF.exfal
+    . assumption
+    . change [] ++ [PropForm.fls] ++ [] ++ Γ₁ ++ [] ⊢₁ B
+
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
     . rename_i G X a
