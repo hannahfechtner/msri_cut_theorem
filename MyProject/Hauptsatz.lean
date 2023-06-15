@@ -55,8 +55,13 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
   . rename_i N
     cases' d
     . assumption
-    . change [] ++ [PropForm.fls] ++ [] ++ Γ₁ ++ [] ⊢₁ B
-
+    . suffices : [] ++ [PropForm.fls] ++ [] ++ Γ₁ ++ [] ⊢₁ B
+      · simpa using this
+      sorry 
+      --have this : [] ++ [PropForm.fls] ++ [] ++ Γ₁ ++ [] = [PropForm.fls] ++ Γ₁ := by
+        --simp
+      --rw [← this]
+      --apply @Proof.com [] [] [] B Γ₁ [PropForm.fls]
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
     . rename_i G X a
