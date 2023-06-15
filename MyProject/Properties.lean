@@ -1,4 +1,5 @@
 import MyProject.Definitions
+import MyProject.Lemma
 
 open sequent_calculus
 
