@@ -7,7 +7,7 @@ open sequent_calculus
 --Define maximum cut depth of a given proof tree.
 
 def Depth_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ
-  | Proof.id => 0 
+  | Proof.id => 0
   | Proof.exfal => 0
   | Proof.com _ _ D => Depth_Cut D
   | Proof.wek _ D => Depth_Cut D
@@ -38,7 +38,7 @@ def Size_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
   | Proof.rdisjl D => Size_Cut D 
   | Proof.rdisjr D => Size_Cut D
   | Proof.ldisj D E => Size_Cut D + Size_Cut E + 1 
-  | @Proof.cut _ A _ D E => Size_Cut D + Size_Cut E + Complexity A
+  | @Proof.cut _ A _ _ D E => Size_Cut D + Size_Cut E + Complexity A
 
 --A measure to allow recursion on proof trees.
 
