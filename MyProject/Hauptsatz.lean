@@ -1,5 +1,7 @@
 import MyProject.Definitions
 import MyProject.Size
+import MyProject.Lemma
+
 
 open sequent_calculus
 
@@ -88,8 +90,8 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     
     -- here below is the bot case
   . cases' d
-    . exact Proof_CF.contr g 
-    . exact Proof_CF.exfal
+    . assumption
+    . apply EX_more
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
     . rename_i G X a

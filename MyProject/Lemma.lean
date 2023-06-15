@@ -19,6 +19,17 @@ theorem transport_CF {Γ Δ : List PropForm} {A : PropForm} : (Γ ++ Δ  ⊢₁ 
   simp
   assumption
 
+theorem triplet (Γ Δ Η : List PropForm) {A : PropForm} : (Γ ++ Δ ++ Η ⊢₁ A) → (Δ ++ Γ ++ Η ⊢₁ A)  := by
+  intro h
+  have this : [] ++ Δ  ++ [] ++ Γ  ++ Η = Δ  ++ Γ ++ Η := by
+    simp
+  rw [← this]
+  apply Proof_CF.com
+  simp
+  have that : Γ ++ Δ ++ Η = Γ ++ (Δ ++ Η) := by simp
+  rw [←that]
+  assumption
+
 theorem CF_Regular {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ ⊢ A) := by 
   intro h
   induction h
