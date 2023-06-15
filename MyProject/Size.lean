@@ -6,43 +6,26 @@ open sequent_calculus
 
 --Define maximum cut depth of a given proof tree.
 
-def Depth_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ
-  | Proof.id => 0
-  | Proof.exfal => 0
-  | Proof.com _ _ D => Depth_Cut D
-  | Proof.wek _ D => Depth_Cut D
-  | Proof.contr _ D => Depth_Cut D
-  | Proof.rimpl D => Depth_Cut D
-  | Proof.limpl D E => max (Depth_Cut D) (Depth_Cut E)
-  | Proof.rconj D E => max (Depth_Cut D) (Depth_Cut E)
-  | Proof.lconjl D => Depth_Cut D
-  | Proof.lconjr D => Depth_Cut D
-  | Proof.rdisjl D => Depth_Cut D
-  | Proof.rdisjr D => Depth_Cut D
-  | Proof.ldisj D E => max (Depth_Cut D) (Depth_Cut E)
-  | Proof.cut D E => max (Depth_Cut D) (Depth_Cut E) + 1
+def Proof_size {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ
+  | Proof.id => 1
+  | Proof.exfal => 1
+  | Proof.com _ _ D => Proof_size D +1
+  | Proof.wek _ D => Proof_size D +1
+  | Proof.contr _ D => Proof_size D +1
+  | Proof.rimpl D => Proof_size D +1
+  | Proof.limpl D E =>  (Proof_size D) + (Proof_size E) +1
+  | Proof.rconj D E =>  (Proof_size D) + (Proof_size E) +1
+  | Proof.lconjl D => Proof_size D +1
+  | Proof.lconjr D => Proof_size D +1
+  | Proof.rdisjl D => Proof_size D +1
+  | Proof.rdisjr D => Proof_size D +1
+  | Proof.ldisj D E =>  (Proof_size D) + (Proof_size E) +1
+  | Proof.cut D E =>  (Proof_size D) + (Proof_size E) + 1
 
 --Define the sum of complexities of all cut formulas
 
-def Size_Cut {Γ : List PropForm} {A : PropForm} : Proof Γ A →  ℕ
-  | Proof.id => 0 
-  | Proof.exfal => 0
-  | Proof.com _ _ D => Size_Cut D 
-  | Proof.wek _ D => Size_Cut D
-  | Proof.contr _ D => Size_Cut D
-  | Proof.rimpl D => Size_Cut D
-  | Proof.limpl D E => Size_Cut D + Size_Cut E
-  | Proof.rconj D E => Size_Cut D + Size_Cut E
-  | Proof.lconjl D => Size_Cut D
-  | Proof.lconjr D => Size_Cut D
-  | Proof.rdisjl D => Size_Cut D 
-  | Proof.rdisjr D => Size_Cut D
-  | Proof.ldisj D E => Size_Cut D + Size_Cut E + 1 
-  | @Proof.cut _ A _ _ D E => Size_Cut D + Size_Cut E + Complexity A
-
---A measure to allow recursion on proof trees.
-
-def Data_Cut {Γ : List PropForm} {A : PropForm} (D : Proof Γ A) : ℕ × ℕ := (Depth_Cut D, Size_Cut D) 
+--may need to subtly change this format to show it's simulataneous on D and E
+def Data_Cut {Γ₁ Γ₂  : List PropForm} {A C : PropForm} (D : Proof Γ₁ A) (E : Proof (A::Γ₂) C) : ℕ × ℕ × ℕ := (Complexity A, Proof_size D, Proof_size E) 
 
 
 def less_than (A B : ℕ × ℕ) : Prop := 
