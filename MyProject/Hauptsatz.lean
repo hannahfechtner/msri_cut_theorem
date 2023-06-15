@@ -1,10 +1,6 @@
 import MyProject.Definitions
 import MyProject.Size
 import MyProject.Lemma
-<<<<<<< HEAD
-
-=======
->>>>>>> c288dcd (impl update)
 
 open sequent_calculus
 
@@ -66,15 +62,27 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
         simp  
       rw [← deq]
       apply @Proof_CF.com
-      have deq1 : X ++ W ++ Y ++ V ++ (Z ++ Γ₁) = X ++ W ++ Y ++ V ++ Z ++ Γ₁ := by
-        simp  
-      rw [deq1]
-      apply hauptsatz (Proof.cut d e) 
+      simp
+      have := hauptsatz (Proof.cut d e)
+      simp at this 
+      assumption
     . rename_i G X a
-      
+      have deq : X ++ G ++ Γ₁ = X ++ (G ++ Γ₁) := by
+        simp
+      rw [deq] 
+      apply Proof_CF.wek
+      apply hauptsatz (Proof.cut a e)
     . rename_i X G a
-      apply hauptsatz (Proof.cut (Proof.contr a) e)
+      have deq : G ++ X ++ Γ₁ = G ++ (X ++ Γ₁) := by
+        simp
+      rw [deq] 
+      apply Proof_CF.contr
+      simp 
+      have := hauptsatz (Proof.cut a e)
+      simp at this
+      assumption
     . rename_i G X Y a b 
+      
       apply hauptsatz (Proof.cut (Proof.limpl a b) e) 
     . rename_i Z a Y c 
       apply hauptsatz 
