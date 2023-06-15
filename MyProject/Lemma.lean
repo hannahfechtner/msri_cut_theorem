@@ -1,6 +1,4 @@
 import MyProject.Definitions
--- import MyProject.Properties
--- import MyProject.Size
 open sequent_calculus
 
 theorem CF_Regular {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ ⊢ A) := by 
