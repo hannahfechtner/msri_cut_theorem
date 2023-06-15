@@ -21,7 +21,7 @@ open PropForm
 
 def Complexity : PropForm → ℕ 
   | var _ => 0
-  | fls => 1
+  | fls => 0
   | impl P Q =>  (Complexity P) + (Complexity Q) + 1
   | conj P Q =>  (Complexity P) + (Complexity Q) + 1
   | disj P Q =>  (Complexity P) + (Complexity Q) + 1
