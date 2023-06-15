@@ -1,4 +1,5 @@
 import MyProject.Definitions
+import MyProject.Size
 
 open sequent_calculus
 
@@ -190,3 +191,4 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
 
     . rename_i X a b
       sorry
+  termination_by hauptsatz A => Data_Cut A 
