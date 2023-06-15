@@ -261,25 +261,20 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       apply hauptsatz (Proof.cut (Proof.contr a) e)
     . rename_i G X Y a b 
       apply hauptsatz (Proof.cut (Proof.limpl a b) e) 
-    . rename_i Y a
+    . rename_i X Y
       apply hauptsatz 
-      -- apply (Proof.cut (Proof.lconjl _) e)
       sorry
     . rename_i X G Y a
       apply hauptsatz 
-      -- apply (Proof.cut (Proof.lconjr a) e)
       sorry
-    . rename_i a
+    . rename_i Z a Y c 
       apply hauptsatz 
-      -- apply (Proof.cut (Proof.rdisjl a) e)
-      sorry
-    . rename_i a
+      apply (Proof.cut (Proof.lconjr c) e) 
+    . rename_i X Y a b c
       apply hauptsatz 
-      -- apply (Proof.cut (Proof.rdisjr a) e)
-      sorry
+      apply (Proof.cut (Proof.ldisj b c) e)
     . rename_i Y a b
       apply hauptsatz 
-      -- apply (Proof.cut (Proof.ldisj a b) e)
       sorry
 
     
