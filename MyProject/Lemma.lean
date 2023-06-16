@@ -32,7 +32,7 @@ theorem triplet_left (Γ Δ Η : List PropForm) {A : PropForm} : (Γ ++ Δ ++ Η
   rw [←that]
   assumption
 
-theorem CF_C {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ ⊢ A)
+lemma CF_C {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ ⊢ A)
   | Proof_CF.id => Proof.id
   | Proof_CF.exfal => Proof.exfal
   | @Proof_CF.com Θ Λ Ξ C X Y D => @Proof.com Θ Λ Ξ C X Y (CF_C D)
@@ -206,8 +206,23 @@ def rimpl_inv {Γ : List PropForm} {A B : PropForm} (D : Γ ⊢ A → B) : A :: 
   --     apply rimpl_inv f
   -- termination_by rimpl_inv D => Proof_size D    
 
-def rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → ((Γ ⊢ A) × (Γ ⊢ B)) := by
-  sorry 
+def rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → ((Γ ⊢ A) × (Γ ⊢ B))
+:= by sorry
+-- := by sorry
+  -- | Proof.id => (Proof.lconjl (@Proof.id A), Proof.lconjr (@Proof.id B))
+  -- | Proof.exfal => (@Proof.exfal A, @Proof.exfal B)
+  -- | Proof.com X Y D => by
+  --   constructor 
+  --   . apply Proof.com 
+  --     apply (rconj_inv D).1
+  --   . apply Proof.com 
+  --     apply (rconj_inv D).2
+  -- | Proof.wek X D => (Proof.wek X (rconj_inv D).1, Proof.wek X (rconj_inv D).2)
+  -- | Proof.contr X D => (Proof.contr X (rconj_inv D).1, Proof.contr X (rconj_inv D).2)
+  -- | Proof.rimpl D => by 
+    
+
+                                  
 
 def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → ((A :: Γ ⊢ C) × (B :: Γ ⊢ C)) := by
   sorry  
