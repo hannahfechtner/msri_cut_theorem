@@ -82,19 +82,8 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       simp at this
       assumption
     . rename_i G X Y a b 
-      apply Proof_CF.limpl
-      . have thing : [] ++ G ++ [] ++ Γ₁ ++[] =  List.append G Γ₁ := by simp
-        rw [← thing]
-        apply Proof_CF.com 
-        simp
-        apply Proof_CF.wek
-        exact hauptsatz a
-      apply hauptsatz
-      have thing: Y :: List.append G Γ₁= ([Y]++G) ++Γ₁ := by simp
-      rw [thing]
-      apply Proof.cut (A:= &N) 
-      . apply b 
-      apply e
+      
+      apply hauptsatz (Proof.cut (Proof.limpl a b) e) 
     . rename_i Z a Y c 
       apply hauptsatz 
       apply (Proof.cut (Proof.lconjl c) e)
@@ -136,7 +125,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
   . rename_i CF₁ CF₂ h i
     cases' d
     . exact Proof_CF.contr g 
-    . apply EX_more
+    . exact Proof_CF.exfal
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
     . rename_i G X a
@@ -162,8 +151,8 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     -- here below is the conj case
   . rename_i CF₁ CF₂ h i
     cases' d
-    . assumption
-    . apply EX_more
+    . exact Proof_CF.contr g
+    . exact Proof_CF.exfal
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
     . rename_i G X a
@@ -173,14 +162,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . rename_i G X Y a b 
       apply hauptsatz (Proof.cut (Proof.limpl a b) e) 
     . rename_i X Y
-      --revert e
-      --generalize ((CF₁ ∧ CF₂) :: Γ₁ ⊢ B) = e
-      --have thing: ((CF₁ ∧ CF₂) :: Γ₁) = List.append ([] ++ [CF₁ ∧ CF₂] ++ [] ++ Γ₁) [] := by simp
-      --rw [thing] at e
-      match e with
-        | Proof.id => _
-        | Proof.exfal => _
-        | _ => sorry 
+      apply hauptsatz 
       sorry
     . rename_i Z a Y c 
       apply hauptsatz 
@@ -198,9 +180,20 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     --here below is the disj case
   . rename_i X Y a b 
     cases' d
-    . sorry
-    . sorry
-    . sorry 
+    . apply hauptsatz e
+
+    . apply transport_CF
+      apply Proof_CF.wek Γ₁  
+      apply Proof_CF.exfal
+
+    . rename_i Θ Λ Ξ Γ Δ x
+      have d: Θ ++ Δ ++ Λ ++ Γ ++ Ξ ++ Γ₁ = Θ ++ Δ ++ Λ ++ Γ ++ (Ξ ++ Γ₁) := by simp
+      rw [d]
+      apply Proof_CF.com
+      have d': Θ ++ Γ ++ Λ ++ Δ ++ (Ξ ++ Γ₁) = Θ ++ Γ ++ Λ ++ Δ ++ Ξ ++ Γ₁ := by simp
+      rw [d']
+      exact hauptsatz (Proof.cut x e)
+
     . rename_i Γ Δ x 
       have d : Δ ++ Γ ++ Γ₁ = Δ ++ (Γ ++ Γ₁) := by simp 
       rw [d]
@@ -218,8 +211,23 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . rename_i Γ G H x y 
       apply Proof_CF.limpl (transport_CF (Proof_CF.wek Γ₁ (hauptsatz x))) (hauptsatz (Proof.cut y e))
       
-    . rename_i X a b
+    . rename_i G Γ H x 
+      exact Proof_CF.lconjl (hauptsatz (Proof.cut x e))
+
+    . rename_i G Γ H x 
+      exact Proof_CF.lconjr (hauptsatz (Proof.cut x e))
+
+    . rename_i x
       sorry
+      
+    . rename_i x
+      sorry
+
+    . rename_i G Γ H x y
+      exact Proof_CF.ldisj (hauptsatz (Proof.cut x e) ) (hauptsatz (Proof.cut y e))
+      
+
+    . sorry
   
   
   termination_by hauptsatz A => Data_Cut A 
