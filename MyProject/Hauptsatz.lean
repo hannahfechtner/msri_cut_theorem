@@ -163,30 +163,80 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       sorry
     -- here below is the conj case
   . rename_i CF₁ CF₂ h i
-    cases' d
-    . assumption
-    . apply EX_more 
-    . rename_i G X H Y I a
-      have d: G ++ I ++ X ++ Y ++ H ++ Γ₁ = G ++ I ++ X ++ Y ++ (H ++ Γ₁) := by simp
-      rw [d]
+    generalize h' : (CF₁ ∧ CF₂) :: Γ₁ = Δ 
+    rw [h'] at e
+    cases' e
+    . revert h'
+      intro ih
+      have thing : (CF₁ ∧ CF₂) = B := by sorry
+      rw [← thing]
+      have that : (Γ₀ ++ Γ₁) = ([] ++ Γ₀ ++ [] ++ Γ₁ ++ []) := by simp
+      rw [that]
       apply Proof_CF.com
-      have d': G ++ Y ++ X ++ I ++ (H ++ Γ₁) = G ++ Y ++ X ++ I ++ H ++ Γ₁ := by simp
-      rw [d']
-      exact hauptsatz (Proof.cut a e)
-    . rename_i G X a
-      have d : X ++ G ++ Γ₁ = X ++ (G ++ Γ₁) := by simp 
-      rw [d]
-      exact Proof_CF.wek X (hauptsatz (Proof.cut a e))
-    . rename_i X G a
-      have d : G ++ X ++ Γ₁ = G ++ (X ++ Γ₁) := by simp
-      rw [d]
-      apply Proof_CF.contr G
-      have d' : G ++ G ++ X ++ Γ₁ = G ++ G ++ (X ++ Γ₁) := by simp
-      rw [← d'] 
-      exact hauptsatz (Proof.cut a e)
-    . rename_i G X Y a b 
-      apply Proof_CF.limpl (transport_CF (Proof_CF.wek Γ₁ (hauptsatz a))) (hauptsatz (Proof.cut b e))
+      simp
+      apply Proof_CF.wek
+      apply hauptsatz
+      exact d
+    . revert h'
+      intro ih
+      have thing : (CF₁ ∧ CF₂) = B := by sorry
+      rw [← thing]
+      have that : (Γ₀ ++ Γ₁) = ([] ++ Γ₀ ++ [] ++ Γ₁ ++ []) := by simp
+      rw [that]
+      apply Proof_CF.com
+      simp
+      apply Proof_CF.wek
+      apply hauptsatz
+      exact d 
+    . revert h'
+      intro ih
+      have thing : (CF₁ ∧ CF₂) = B := by sorry
+      rw [← thing]
+      have that : (Γ₀ ++ Γ₁) = ([] ++ Γ₀ ++ [] ++ Γ₁ ++ []) := by simp
+      rw [that]
+      apply Proof_CF.com
+      simp
+      apply Proof_CF.wek
+      apply hauptsatz
+      exact d 
+    . revert h'
+      intro ih
+      have thing : (CF₁ ∧ CF₂) = B := by sorry
+      rw [← thing]
+      have that : (Γ₀ ++ Γ₁) = ([] ++ Γ₀ ++ [] ++ Γ₁ ++ []) := by simp
+      rw [that]
+      apply Proof_CF.com
+      simp
+      apply Proof_CF.wek
+      apply hauptsatz
+      exact d 
+    . revert h'
+      intro ih
+      have thing : (CF₁ ∧ CF₂) = B := by sorry
+      rw [← thing]
+      have that : (Γ₀ ++ Γ₁) = ([] ++ Γ₀ ++ [] ++ Γ₁ ++ []) := by simp
+      rw [that]
+      apply Proof_CF.com
+      simp
+      apply Proof_CF.wek
+      apply hauptsatz
+      exact d 
+    . apply Proof_CF.rimpl
+      apply hauptsatz
+      rename_i one two three
 
+      have thing : [] ++ [one] ++[] ++ Γ₀ ++Γ₁  = one :: (Γ₀ ++ Γ₁) := by simp
+      rw [← thing]
+      apply Proof.com
+      simp
+      apply Proof.cut (A:= (CF₁ ∧ CF₂))
+      . exact d
+      rw [← h'] at three 
+      have that : (CF₁ ∧ CF₂) :: one :: Γ₁ = [] ++ [(CF₁ ∧ CF₂)] ++ [] ++ [one] ++Γ₁ := by simp
+      rw [that]
+      apply Proof.com
+      simp
+      exact three
     . rename_i X Y
       sorry
     . rename_i Z a Y c 
