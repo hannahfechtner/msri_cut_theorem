@@ -74,24 +74,38 @@ theorem CF_Regular {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ �
     . exact ih1
     exact ih2
   
-theorem my_attemp (Γ : List PropForm) (P : PropForm) (A B C D E : List PropForm) :
- (P :: Γ = A ++ B ++ C ++ D ++ E) → 
-((P ∈ A) ∨ (P ∈ B) ∨ (P ∈ C) ∨ (P ∈ D) ∨ (P ∈ E)) := by 
-  intro h 
-  induction A 
-  sorry
-  sorry
+-- theorem my_attempt (Γ : List PropForm) (P : PropForm) (A B C D E : List PropForm) :
+--  (P :: Γ = A ++ B ++ C ++ D ++ E) → 
+-- ((P ∈ A) ∨ (P ∈ B) ∨ (P ∈ C) ∨ (P ∈ D) ∨ (P ∈ E)) := by 
+--   intro h 
+--   induction A 
+--   sorry
+--   sorry
 
-theorem or_principal_left {Γ₁ Γ₂ : List PropForm} {A B D : PropForm} : (Γ₁ ⊢ A) -> ([(A ∨ B)] ++ Γ₂ ⊢ D) -> (Γ₁++Γ₂ ⊢₁ D):= by
-  intro d
-  generalize h' : A ∨ B = C
-  generalize h'' : D=G
-  generalize h''' : Γ₂=Δ 
-  intro h
-  revert h'
-  revert h''
-  revert h'''
-  cases h 
+theorem or_principal_left {Γ₁ Γ₂ : List PropForm} 
+    {A B D : PropForm} : (Γ₁ ⊢ A) -> ([(A ∨ B)] ++ Γ₂ ⊢ D) -> 
+       (Γ₁++Γ₂ ⊢₁ D):= by
+  -- intro d
+  -- generalize h' : [(A ∨ B)] ++ Γ₂ = Δ 
+  -- -- generalize h'' : D=G
+  -- -- generalize h''' : Γ₂=Δ 
+  -- intro e
+  -- revert h'
+  -- -- revert h''
+  -- -- revert h'''generalize h'' : D=G
+  -- --generalize h''' : Γ₂=Δ 
+  -- cases e
+  -- . intro ih
+  --   have this : D = A ∨ B := by sorry
+  --   rw [this]
+  --   have that : [] ++ Γ₁ ++ [] ++ Γ₂ ++ [] = Γ₁ ++ Γ₂ := by simp
+  --   rw [← that]
+  --   apply Proof_CF.com
+  --   simp
+  --   apply Proof_CF.wek Γ₂ 
+  --   apply Proof_CF.rdisjl
+  --   exact hauptschatz d
+    
   
 
 
@@ -105,7 +119,7 @@ def rimpl_inv {Γ : List PropForm} {A B : PropForm} (D : Γ ⊢ A → B) : A :: 
       simp
       apply Proof.wek [A] Proof.id
   . apply Proof.wek [A] Proof.exfal
-  . rename_i a b c d e f 
+  . rename_i a b c d e f
     apply @Proof.com ([A] ++ a) b c _ d e (rimpl_inv f) 
   . rename_i a b c
     apply @Proof.com [] [] a _ b [A] 

@@ -82,13 +82,13 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       simp at this
       assumption
     . rename_i G X Y a b 
-      sorry
+      apply Proof_CF.limpl (transport_CF (Proof_CF.wek Γ₁ (hauptsatz a))) (hauptsatz (Proof.cut b e))
     . rename_i Z a Y c 
-      sorry
+      exact Proof_CF.lconjl (hauptsatz (Proof.cut c e))
     . rename_i Z a Y c 
-      sorry
+      exact Proof_CF.lconjr (hauptsatz (Proof.cut c e))
     . rename_i X Y a b c
-      sorry
+      exact Proof_CF.ldisj (hauptsatz (Proof.cut b e) ) (hauptsatz (Proof.cut c e))
     . rename_i Y a b
       apply hauptsatz 
       sorry
@@ -98,19 +98,31 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . assumption
     . apply EX_more
     . rename_i G X H Y I a
-      sorry
+      have d: G ++ I ++ X ++ Y ++ H ++ Γ₁ = G ++ I ++ X ++ Y ++ (H ++ Γ₁) := by simp
+      rw [d]
+      apply Proof_CF.com
+      have d': G ++ Y ++ X ++ I ++ (H ++ Γ₁) = G ++ Y ++ X ++ I ++ H ++ Γ₁ := by simp
+      rw [d']
+      exact hauptsatz (Proof.cut a e)
     . rename_i G X a
-      sorry
+      have d : X ++ G ++ Γ₁ = X ++ (G ++ Γ₁) := by simp 
+      rw [d]
+      exact Proof_CF.wek X (hauptsatz (Proof.cut a e))
     . rename_i X G a
-      sorry
+      have d : G ++ X ++ Γ₁ = G ++ (X ++ Γ₁) := by simp
+      rw [d]
+      apply Proof_CF.contr G
+      have d' : G ++ G ++ X ++ Γ₁ = G ++ G ++ (X ++ Γ₁) := by simp
+      rw [← d'] 
+      exact hauptsatz (Proof.cut a e)
     . rename_i G X Y a b 
-      sorry
+      apply Proof_CF.limpl (transport_CF (Proof_CF.wek Γ₁ (hauptsatz a))) (hauptsatz (Proof.cut b e))
     . rename_i Z a Y c 
-      sorry
+      exact Proof_CF.lconjl (hauptsatz (Proof.cut c e))
     . rename_i Z a Y c 
-      sorry
+      exact Proof_CF.lconjr (hauptsatz (Proof.cut c e))
     . rename_i X Y a b c
-      sorry
+      exact Proof_CF.ldisj (hauptsatz (Proof.cut b e) ) (hauptsatz (Proof.cut c e))
     . rename_i Y a b
       sorry
     -- here below is the impl case
@@ -119,22 +131,35 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . assumption
     . apply EX_more 
     . rename_i G X H Y I a
-      sorry
+      have d: G ++ I ++ X ++ Y ++ H ++ Γ₁ = G ++ I ++ X ++ Y ++ (H ++ Γ₁) := by simp
+      rw [d]
+      apply Proof_CF.com
+      have d': G ++ Y ++ X ++ I ++ (H ++ Γ₁) = G ++ Y ++ X ++ I ++ H ++ Γ₁ := by simp
+      rw [d']
+      exact hauptsatz (Proof.cut a e)
     . rename_i G X a
-      sorry
+      have d : X ++ G ++ Γ₁ = X ++ (G ++ Γ₁) := by simp 
+      rw [d]
+      exact Proof_CF.wek X (hauptsatz (Proof.cut a e))
     . rename_i X G a
-      sorry
+      have d : G ++ X ++ Γ₁ = G ++ (X ++ Γ₁) := by simp
+      rw [d]
+      apply Proof_CF.contr G
+      have d' : G ++ G ++ X ++ Γ₁ = G ++ G ++ (X ++ Γ₁) := by simp
+      rw [← d'] 
+      exact hauptsatz (Proof.cut a e)
     . rename_i a
       sorry
-    . rename_i  Y a b 
-      sorry
+    . rename_i  G X Y a b 
+      apply Proof_CF.limpl (transport_CF (Proof_CF.wek Γ₁ (hauptsatz a))) (hauptsatz (Proof.cut b e))
     . rename_i Z a Y c 
-      sorry
+      exact Proof_CF.lconjl (hauptsatz (Proof.cut c e))
+
     . rename_i Z a Y c 
-      sorry
+      exact Proof_CF.lconjr (hauptsatz (Proof.cut c e))
     . rename_i X Y a b c
-      sorry
-    . rename_i Y a b
+      exact Proof_CF.ldisj (hauptsatz (Proof.cut b e) ) (hauptsatz (Proof.cut c e))
+    . rename_i G  X Y a b
       sorry
     -- here below is the conj case
   . rename_i CF₁ CF₂ h i
@@ -142,21 +167,34 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . assumption
     . apply EX_more 
     . rename_i G X H Y I a
-      sorry
+      have d: G ++ I ++ X ++ Y ++ H ++ Γ₁ = G ++ I ++ X ++ Y ++ (H ++ Γ₁) := by simp
+      rw [d]
+      apply Proof_CF.com
+      have d': G ++ Y ++ X ++ I ++ (H ++ Γ₁) = G ++ Y ++ X ++ I ++ H ++ Γ₁ := by simp
+      rw [d']
+      exact hauptsatz (Proof.cut a e)
     . rename_i G X a
-      sorry
+      have d : X ++ G ++ Γ₁ = X ++ (G ++ Γ₁) := by simp 
+      rw [d]
+      exact Proof_CF.wek X (hauptsatz (Proof.cut a e))
     . rename_i X G a
-      sorry
+      have d : G ++ X ++ Γ₁ = G ++ (X ++ Γ₁) := by simp
+      rw [d]
+      apply Proof_CF.contr G
+      have d' : G ++ G ++ X ++ Γ₁ = G ++ G ++ (X ++ Γ₁) := by simp
+      rw [← d'] 
+      exact hauptsatz (Proof.cut a e)
     . rename_i G X Y a b 
-      sorry
+      apply Proof_CF.limpl (transport_CF (Proof_CF.wek Γ₁ (hauptsatz a))) (hauptsatz (Proof.cut b e))
+
     . rename_i X Y
       sorry
     . rename_i Z a Y c 
-      sorry
+      exact Proof_CF.lconjl (hauptsatz (Proof.cut c e))
     . rename_i Z a Y c 
-      sorry
+      exact Proof_CF.lconjr (hauptsatz (Proof.cut c e))
     . rename_i X Y a b c
-      sorry
+      exact Proof_CF.ldisj (hauptsatz (Proof.cut b e) ) (hauptsatz (Proof.cut c e))
     . rename_i Y a b
       sorry
 
