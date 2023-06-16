@@ -1,4 +1,6 @@
 import MyProject.Definitions
+import MyProject.Size
+
 open sequent_calculus
 
 theorem EX_more {Γ : List PropForm} {A : PropForm} : (⊥ :: Γ ⊢₁ A) := by
@@ -72,4 +74,91 @@ theorem CF_Regular {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ �
     . exact ih1
     exact ih2
   
+theorem my_attemp (Γ : List PropForm) (P : PropForm) (A B C D E : List PropForm) :
+ (P :: Γ = A ++ B ++ C ++ D ++ E) → 
+((P ∈ A) ∨ (P ∈ B) ∨ (P ∈ C) ∨ (P ∈ D) ∨ (P ∈ E)) := by 
+  intro h 
+  induction A 
+  sorry
+  sorry
 
+def rimpl_inv {Γ : List PropForm} {A B : PropForm} (D : Γ ⊢ A → B) : A :: Γ ⊢ B := by
+  cases D 
+  . apply @Proof.com [] [] [] _ [_] [_]
+    apply Proof.limpl
+    . apply Proof.id
+    . apply @Proof.com [] [] [] _ [_] [_]
+      simp
+      apply Proof.wek [A] Proof.id
+  . apply Proof.wek [A] Proof.exfal
+  . rename_i a b c d e f 
+    apply @Proof.com ([A] ++ a) b c _ d e (rimpl_inv f) 
+  . rename_i a b c
+    apply @Proof.com [] [] a _ b [A] 
+    simp
+    apply Proof.wek b (rimpl_inv c)
+  . rename_i a b c 
+    --this is ridiculus 
+    have deq : [] ++ [A] ++ [] ++ (b ++ a) ++ [] = A :: (b ++ a) := by 
+      simp
+    rw [← deq]  
+    apply Proof.com
+    simp
+    apply Proof.contr
+    have deq1 : [] ++ (b ++ b ++ a) ++ [] ++ [A] ++ [] = b ++ b ++ (a ++ [A]) := by
+      simp
+    rw [← deq1]  
+    apply Proof.com [A] (b ++ b ++ a) 
+    simp at c
+    simp
+    apply rimpl_inv c
+  . assumption
+  . rename_i a b c d e
+    change [] ++ [A] ++ [] ++ [b → c] ++ a ⊢ B
+    apply Proof.com
+    apply Proof.limpl
+    . apply Proof.wek [A] d
+    . simp
+      change [] ++ [c] ++ [] ++ [A] ++ a ⊢ B
+      apply Proof.com
+      apply rimpl_inv e
+  . rename_i a b c d
+    change [] ++ [A] ++ [] ++ [a ∧ c] ++ b ⊢ B
+    apply Proof.com
+    apply Proof.lconjl
+    simp
+    change [] ++ [a] ++ [] ++ [A] ++ b ⊢ B
+    apply Proof.com
+    apply rimpl_inv d 
+  . rename_i a b c d
+    change [] ++ [A] ++ [] ++ [c ∧ a] ++ b ⊢ B
+    apply Proof.com
+    apply Proof.lconjr
+    simp
+    change [] ++ [a] ++ [] ++ [A] ++ b ⊢ B
+    apply Proof.com
+    apply rimpl_inv d 
+  . rename_i a b c d f
+    change [] ++ [A] ++ [] ++ [a ∨ c] ++ b ⊢ B
+    apply Proof.com
+    apply Proof.ldisj
+    . simp
+      change [] ++ [a] ++ [] ++ [A] ++ b ⊢ B
+      apply Proof.com
+      apply rimpl_inv d 
+    . simp
+      change [] ++ [c] ++ [] ++ [A] ++ b ⊢ B
+      apply Proof.com
+      apply rimpl_inv f 
+  . rename_i a b c e f 
+    change [] ++ [A] ++ [] ++ a ++ c ⊢ B
+    apply Proof.com
+    have deq1 : [] ++ a ++ [] ++ [A] ++ c = a ++ (A :: c) := by
+      simp
+    rw [deq1]
+    apply @Proof.cut _ b _ _
+    . assumption
+    . change [] ++ [b] ++ [] ++ [A] ++ c ⊢ B 
+      apply Proof.com
+      apply rimpl_inv f
+  termination_by rimpl_inv D => Proof_size D    
