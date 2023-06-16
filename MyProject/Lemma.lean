@@ -73,3 +73,10 @@ theorem CF_Regular {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ �
     exact ih2
   
 
+theorem or_principal_left {Γ₁ Γ₂ : List PropForm} {A B C : PropForm} : (Γ₁ ⊢ A) -> ([(A ∨ B)] ++ Γ₂ ⊢ C) -> (Γ₁++Γ₂ ⊢₁ C):= by
+  --intro d
+  generalize h' : A ∧ B = C
+  intro h
+  revert h'
+  cases h
+  . 
