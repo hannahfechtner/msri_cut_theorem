@@ -201,8 +201,9 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       exact Proof_CF.lconjr (hauptsatz (Proof.cut x e))
 
     . rename_i x
-      sorry
-      
+      induction Γ₁
+      sorry 
+      sorry 
     . rename_i x
       sorry
 
