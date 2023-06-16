@@ -89,7 +89,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       exact Proof_CF.lconjr (hauptsatz (Proof.cut c e))
     . rename_i X Y a b c
       exact Proof_CF.ldisj (hauptsatz (Proof.cut b e) ) (hauptsatz (Proof.cut c e))
-    . rename_i Y a b
+    . rename_i X Y a b c
       apply hauptsatz 
       sorry
     
