@@ -136,7 +136,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
   . rename_i CF₁ CF₂ h i
     cases' d
     . exact Proof_CF.contr g 
-    . exact Proof_CF.exfal
+    . apply EX_more
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
     . rename_i G X a
@@ -162,8 +162,8 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     -- here below is the conj case
   . rename_i CF₁ CF₂ h i
     cases' d
-    . exact Proof_CF.contr g
-    . exact Proof_CF.exfal
+    . assumption
+    . apply EX_more
     . rename_i G X H Y I a
       apply hauptsatz (Proof.cut (Proof.com a) e)
     . rename_i G X a
@@ -173,9 +173,14 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . rename_i G X Y a b 
       apply hauptsatz (Proof.cut (Proof.limpl a b) e) 
     . rename_i X Y
-      have thing: ((CF₁ ∧ CF₂) :: Γ₁) = ([] ++ [CF₁ ∧ CF₂] ++ [] ++ Γ₁ ++ []) := by simp
-      rw [thing] at e
-      cases' e 
+      --revert e
+      --generalize ((CF₁ ∧ CF₂) :: Γ₁ ⊢ B) = e
+      --have thing: ((CF₁ ∧ CF₂) :: Γ₁) = List.append ([] ++ [CF₁ ∧ CF₂] ++ [] ++ Γ₁) [] := by simp
+      --rw [thing] at e
+      match e with
+        | Proof.id => _
+        | Proof.exfal => _
+        | _ => sorry 
       sorry
     . rename_i Z a Y c 
       apply hauptsatz 
