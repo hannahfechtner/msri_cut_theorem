@@ -224,7 +224,6 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . apply Proof_CF.rimpl
       apply hauptsatz
       rename_i one two three
-
       have thing : [] ++ [one] ++[] ++ Γ₀ ++Γ₁  = one :: (Γ₀ ++ Γ₁) := by simp
       rw [← thing]
       apply Proof.com
@@ -237,8 +236,10 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       apply Proof.com
       simp
       exact three
-    . rename_i X Y
-      sorry
+    . rename_i Δ Y Z b c
+      apply Proof_CF.limpl
+
+      
     . rename_i Z a Y c 
       sorry
     . rename_i Z a Y c 
