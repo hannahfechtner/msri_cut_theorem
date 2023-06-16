@@ -244,9 +244,20 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       apply Proof.com
       simp
       exact three
-    . sorry 
-    . rename_i Z a Y c 
+    . rename_i one two three four five
       sorry
+    . rename_i D E Y c 
+      apply Proof_CF.rconj
+      . apply hauptsatz
+        apply Proof.cut (A:= CF₁ ∧ CF₂)
+        . exact d
+        rw [h']
+        exact Y
+      apply hauptsatz
+      apply Proof.cut (A:= CF₁ ∧CF₂)
+      . exact d
+      rw [h']
+      exact c
     . rename_i Z a Y c 
       apply hauptsatz
       apply Proof.cut (A := CF₁)
