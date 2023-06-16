@@ -254,7 +254,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
         rw [h']
         exact Y
       apply hauptsatz
-      apply Proof.cut (A:= CF₁ ∧CF₂)
+      apply Proof.cut (A:= CF₁ ∧ CF₂)
       . exact d
       rw [h']
       exact c
@@ -278,8 +278,14 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       have last : CF₂=Z := by sorry
       rw [last]
       exact c
-    . rename_i Y a b
-      sorry
+    . rename_i D E b
+      apply Proof_CF.rdisjl
+      apply hauptsatz
+      apply Proof.cut (A:= CF₁ ∧ CF₂)
+      . exact d
+      rw [h']
+      exact b
+    sorry
 
     --here below is the disj case
   . rename_i X Y a b 
