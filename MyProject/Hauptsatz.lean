@@ -226,8 +226,6 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       have d' : Δ ++ Δ ++ Γ ++ Γ₁ = Δ ++ Δ ++ (Γ ++ Γ₁) := by simp
       rw [← d'] 
       exact hauptsatz (Proof.cut x e)
-      
-      
 
     . rename_i Γ G H x y 
       apply Proof_CF.limpl (transport_CF (Proof_CF.wek Γ₁ (hauptsatz x))) (hauptsatz (Proof.cut y e))
@@ -239,16 +237,15 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       exact Proof_CF.lconjr (hauptsatz (Proof.cut x e))
 
     . rename_i x
-      induction Γ₁
-      sorry 
-      sorry 
+      have thing := (ldisj_inv e).1
+      have other := Proof.cut x thing 
+      exact (hauptsatz other)
     . rename_i x
-      sorry
-
+      have thing := (ldisj_inv e).2
+      have other := Proof.cut x thing 
+      exact (hauptsatz other)
     . rename_i G Γ H x y
       exact Proof_CF.ldisj (hauptsatz (Proof.cut x e) ) (hauptsatz (Proof.cut y e))
-      
-
     . sorry
   
   

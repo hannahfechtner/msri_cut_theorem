@@ -84,7 +84,7 @@ theorem CF_Regular {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ �
 
 theorem or_principal_left {Γ₁ Γ₂ : List PropForm} 
     {A B D : PropForm} : (Γ₁ ⊢ A) -> ([(A ∨ B)] ++ Γ₂ ⊢ D) -> 
-       (Γ₁++Γ₂ ⊢₁ D):= by
+       (Γ₁++Γ₂ ⊢₁ D):= by sorry
   -- intro d
   -- generalize h' : [(A ∨ B)] ++ Γ₂ = Δ 
   -- -- generalize h'' : D=G
@@ -195,7 +195,7 @@ def rimpl_inv {Γ : List PropForm} {A B : PropForm} (D : Γ ⊢ A → B) : A :: 
 def rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → ((Γ ⊢ A) × (Γ ⊢ B)) := by
   sorry 
 
-def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → ((A :: Γ ⊢ C) ⊕ (B :: Γ ⊢ C)) := by
+def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → ((A :: Γ ⊢ C) × (B :: Γ ⊢ C)) := by
   sorry  
 
 
