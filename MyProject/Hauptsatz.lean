@@ -240,11 +240,11 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . rename_i X Y
       sorry
     . rename_i Z a Y c 
-      exact Proof_CF.lconjl (hauptsatz (Proof.cut c e))
+      sorry
     . rename_i Z a Y c 
-      exact Proof_CF.lconjr (hauptsatz (Proof.cut c e))
-    . rename_i X Y a b c
-      exact Proof_CF.ldisj (hauptsatz (Proof.cut b e) ) (hauptsatz (Proof.cut c e))
+      sorry
+    . rename_i X Y a b 
+      sorry
     . rename_i Y a b
       sorry
 
