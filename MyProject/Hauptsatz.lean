@@ -194,8 +194,21 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       apply hauptsatz
       exact d 
 
-    . sorry
-
+    . rename_i one two three
+      apply Proof_CF.rimpl
+      apply hauptsatz
+      have thing : one :: (Γ₀++Γ₁) = [] ++ [one] ++ [] ++ Γ₀ ++ Γ₁ := by simp
+      rw [thing]
+      apply Proof.com
+      simp
+      apply Proof.cut (A := (CF₁ →CF₂))
+      . exact d
+      rw [← h'] at three
+      have that : (CF₁ → CF₂) :: one :: Γ₁ = [] ++ [(CF₁ → CF₂)] ++ [] ++ [one] ++ Γ₁ := by simp 
+      rw [that]
+      apply Proof.com
+      simp
+      exact three
     . revert h'
       intro ih
       have thing : (CF₁ → CF₂) = B := by sorry
