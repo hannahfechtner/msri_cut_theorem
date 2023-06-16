@@ -82,16 +82,13 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       simp at this
       assumption
     . rename_i G X Y a b 
-      apply hauptsatz (Proof.cut (Proof.limpl a b) e) 
+      sorry
     . rename_i Z a Y c 
-      apply hauptsatz 
-      apply (Proof.cut (Proof.lconjl c) e)
+      sorry
     . rename_i Z a Y c 
-      apply hauptsatz 
-      apply (Proof.cut (Proof.lconjr c) e) 
+      sorry
     . rename_i X Y a b c
-      apply hauptsatz 
-      apply (Proof.cut (Proof.ldisj b c) e)
+      sorry
     . rename_i Y a b
       apply hauptsatz 
       sorry
@@ -109,16 +106,12 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . rename_i G X Y a b 
       sorry
     . rename_i Z a Y c 
-      apply hauptsatz 
-      apply (Proof.cut (Proof.lconjl c) e)
+      sorry
     . rename_i Z a Y c 
-      apply hauptsatz 
-      apply (Proof.cut (Proof.lconjr c) e) 
+      sorry
     . rename_i X Y a b c
-      apply hauptsatz 
-      apply (Proof.cut (Proof.ldisj b c) e)
+      sorry
     . rename_i Y a b
-      apply hauptsatz 
       sorry
     -- here below is the impl case
   . rename_i CF₁ CF₂ h i
@@ -146,30 +139,25 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     -- here below is the conj case
   . rename_i CF₁ CF₂ h i
     cases' d
-    . exact Proof_CF.contr g
-    . exact Proof_CF.exfal
+    . assumption
+    . apply EX_more 
     . rename_i G X H Y I a
-      apply hauptsatz (Proof.cut (Proof.com a) e)
+      sorry
     . rename_i G X a
-      apply hauptsatz (Proof.cut (Proof.wek a) e)
+      sorry
     . rename_i X G a
-      apply hauptsatz (Proof.cut (Proof.contr a) e)
+      sorry
     . rename_i G X Y a b 
-      apply hauptsatz (Proof.cut (Proof.limpl a b) e) 
+      sorry
     . rename_i X Y
-      apply hauptsatz 
       sorry
     . rename_i Z a Y c 
-      apply hauptsatz 
-      apply (Proof.cut (Proof.lconjl c) e) 
+      sorry
     . rename_i Z a Y c 
-      apply hauptsatz 
-      apply (Proof.cut (Proof.lconjr c) e) 
+      sorry
     . rename_i X Y a b c
-      apply hauptsatz 
-      apply (Proof.cut (Proof.ldisj b c) e)
+      sorry
     . rename_i Y a b
-      apply hauptsatz 
       sorry
 
     --here below is the disj case
