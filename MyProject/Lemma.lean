@@ -91,7 +91,7 @@ def rimpl_inv {Γ : List PropForm} {A B : PropForm} (D : Γ ⊢ A → B) : A :: 
       simp
       apply Proof.wek [A] Proof.id
   . apply Proof.wek [A] Proof.exfal
-  . rename_i a b c d e f 
+  . rename_i a b c d e f
     apply @Proof.com ([A] ++ a) b c _ d e (rimpl_inv f) 
   . rename_i a b c
     apply @Proof.com [] [] a _ b [A] 
@@ -162,3 +162,10 @@ def rimpl_inv {Γ : List PropForm} {A B : PropForm} (D : Γ ⊢ A → B) : A :: 
       apply Proof.com
       apply rimpl_inv f
   termination_by rimpl_inv D => Proof_size D    
+
+def rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → ((Γ ⊢ A) × (Γ ⊢ B)) := by
+  sorry 
+
+def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → ((A :: Γ ⊢ C) ⊕ (B :: Γ ⊢ C)) := by
+  sorry 
+
