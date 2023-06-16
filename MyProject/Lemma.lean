@@ -32,47 +32,61 @@ theorem triplet_left (Γ Δ Η : List PropForm) {A : PropForm} : (Γ ++ Δ ++ Η
   rw [←that]
   assumption
 
-theorem CF_C {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ ⊢ A) := by 
-  intro h
-  induction h
-  . exact Proof.id 
-  . exact Proof.exfal
-  . rename_i ih
-    apply Proof.com
-    exact ih 
-  . rename_i ih
-    apply Proof.wek
-    exact ih
-  . rename_i ih
-    apply Proof.contr
-    exact ih
-  . rename_i ih
-    apply Proof.rimpl
-    exact ih
-  . rename_i ih1 ih2
-    apply Proof.limpl
-    . exact ih1 
-    exact ih2
-  . rename_i ih1 ih2
-    apply Proof.rconj
-    . exact ih1
-    exact ih2
-  . rename_i ih
-    apply Proof.lconjl
-    exact ih
-  . rename_i ih
-    apply Proof.lconjr
-    exact ih
-  . rename_i ih
-    apply Proof.rdisjl
-    exact ih
-  . rename_i ih
-    apply Proof.rdisjr
-    exact ih
-  . rename_i ih1 ih2
-    apply Proof.ldisj
-    . exact ih1
-    exact ih2
+theorem CF_C {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ ⊢ A)
+  | Proof_CF.id => Proof.id
+  | Proof_CF.exfal => Proof.exfal
+  | @Proof_CF.com Θ Λ Ξ C X Y D => @Proof.com Θ Λ Ξ C X Y (CF_C D)
+  | @Proof_CF.wek Θ C Λ D => @Proof.wek Θ C Λ (CF_C D)
+  | @Proof_CF.contr Θ C Λ D => @Proof.contr Θ C Λ (CF_C D)
+  | Proof_CF.rimpl D => Proof.rimpl (CF_C D)
+  | Proof_CF.limpl D E => Proof.limpl (CF_C D) (CF_C E)
+  | Proof_CF.rconj D E => Proof.rconj (CF_C D) (CF_C E)
+  | Proof_CF.lconjl D => Proof.lconjl (CF_C D)
+  | Proof_CF.lconjr D => Proof.lconjr (CF_C D)
+  | Proof_CF.rdisjl D => Proof.rdisjl (CF_C D)
+  | Proof_CF.rdisjr D => Proof.rdisjr (CF_C D) 
+  | Proof_CF.ldisj D E => Proof.ldisj (CF_C D) (CF_C E)
+
+  -- intro h
+  -- induction h
+  -- . exact Proof.id 
+  -- . exact Proof.exfal
+  -- . rename_i ih
+  --   apply Proof.com
+  --   exact ih 
+  -- . rename_i ih
+  --   apply Proof.wek
+  --   exact ih
+  -- . rename_i ih
+  --   apply Proof.contr
+  --   exact ih
+  -- . rename_i ih
+  --   apply Proof.rimpl
+  --   exact ih
+  -- . rename_i ih1 ih2
+  --   apply Proof.limpl
+  --   . exact ih1 
+  --   exact ih2
+  -- . rename_i ih1 ih2
+  --   apply Proof.rconj
+  --   . exact ih1
+  --   exact ih2
+  -- . rename_i ih
+  --   apply Proof.lconjl
+  --   exact ih
+  -- . rename_i ih
+  --   apply Proof.lconjr
+  --   exact ih
+  -- . rename_i ih
+  --   apply Proof.rdisjl
+  --   exact ih
+  -- . rename_i ih
+  --   apply Proof.rdisjr
+  --   exact ih
+  -- . rename_i ih1 ih2
+  --   apply Proof.ldisj
+  --   . exact ih1
+  --   exact ih2
   
 -- theorem my_attempt (Γ : List PropForm) (P : PropForm) (A B C D E : List PropForm) :
 --  (P :: Γ = A ++ B ++ C ++ D ++ E) → 
