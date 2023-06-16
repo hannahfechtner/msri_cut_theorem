@@ -246,7 +246,18 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       exact (hauptsatz other)
     . rename_i G Γ H x y
       exact Proof_CF.ldisj (hauptsatz (Proof.cut x e) ) (hauptsatz (Proof.cut y e))
-    . sorry
-  
+    . rename_i m n o p q
+      apply hauptsatz
+      have deq : m ++ (o ++ Γ₁) = m ++ o ++ Γ₁ := by 
+        simp
+      rw [← deq]
+      apply @Proof.cut m n (o ++ Γ₁) B
+      . apply CF_C
+        apply hauptsatz p 
+      . apply CF_C
+        have deq1 : n :: (o ++ Γ₁) = n :: o ++ Γ₁ := by
+          simp
+        rw [deq1]   
+        apply hauptsatz (Proof.cut (CF_C (hauptsatz q)) (CF_C (hauptsatz e)))
   
   termination_by hauptsatz A => Data_Cut A 
