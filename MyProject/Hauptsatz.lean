@@ -91,7 +91,9 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       exact Proof_CF.ldisj (hauptsatz (Proof.cut b e) ) (hauptsatz (Proof.cut c e))
     . rename_i X Y a b c
       apply hauptsatz 
-      sorry
+      apply @Proof.cut _ (&N)
+      . apply CF_C (hauptsatz (Proof.cut b c))
+      . apply CF_C hauptsatz e
     
     -- here below is the bot case
   . cases' d
@@ -123,8 +125,14 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       exact Proof_CF.lconjr (hauptsatz (Proof.cut c e))
     . rename_i X Y a b c
       exact Proof_CF.ldisj (hauptsatz (Proof.cut b e) ) (hauptsatz (Proof.cut c e))
-    . rename_i Y a b
-      sorry
+    . rename_i X a Y b c  
+      apply hauptsatz 
+      have deq : (X ++ Y) ++ Γ₁ = X ++ Y ++ Γ₁ := by simp
+      rw [← deq]
+      apply @Proof.cut _ PropForm.fls
+      . apply CF_C (hauptsatz (Proof.cut b c))
+      . apply CF_C (hauptsatz e)
+
     -- here below is the impl case
   . rename_i CF₁ CF₂ h i
     cases' d
@@ -311,17 +319,19 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
     . rename_i G Γ H x y
       exact Proof_CF.ldisj (hauptsatz (Proof.cut x e) ) (hauptsatz (Proof.cut y e))
     . rename_i m n o p q
-      apply hauptsatz
-      have deq : m ++ (o ++ Γ₁) = m ++ o ++ Γ₁ := by 
-        simp
-      rw [← deq]
-      apply @Proof.cut m n (o ++ Γ₁) B
-      . apply CF_C
-        apply hauptsatz p 
-      . apply CF_C
-        have deq1 : n :: (o ++ Γ₁) = n :: o ++ Γ₁ := by
-          simp
-        rw [deq1]   
-        apply hauptsatz (Proof.cut (CF_C (hauptsatz q)) (CF_C (hauptsatz e)))
+      sorry
+      --Did a wrong order. Will fix it.
+      -- apply hauptsatz
+      -- have deq : m ++ (o ++ Γ₁) = m ++ o ++ Γ₁ := by 
+      --   simp
+      -- rw [← deq]
+      -- apply @Proof.cut _ n
+      -- . apply CF_C
+      --   apply hauptsatz p 
+      -- . apply CF_C
+      --   have deq1 : n :: (o ++ Γ₁) = n :: o ++ Γ₁ := by
+      --     simp
+      --   rw [deq1]   
+      --   apply hauptsatz (Proof.cut (CF_C (hauptsatz q)) (CF_C (hauptsatz e)))
   
   termination_by hauptsatz A => Data_Cut A 
