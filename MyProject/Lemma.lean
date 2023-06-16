@@ -32,7 +32,7 @@ theorem triplet_left (Γ Δ Η : List PropForm) {A : PropForm} : (Γ ++ Δ ++ Η
   rw [←that]
   assumption
 
-theorem CF_Regular {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ ⊢ A) := by 
+theorem CF_C {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ ⊢ A) := by 
   intro h
   induction h
   . exact Proof.id 
