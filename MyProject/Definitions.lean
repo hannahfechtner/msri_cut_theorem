@@ -1,5 +1,4 @@
 import Mathlib.Data.Real.Basic
---secret message hehehe
 
 --secret message hehehe
 
@@ -86,10 +85,3 @@ inductive Proof_CF : List PropForm → PropForm → Type where
 infixl: 40 " ⊢ " => Proof
 
 infixl: 40 " ⊢₁ " => Proof_CF
-
---Canonical embedding from Proof_CF to Proof.
-
--- def CF_to_C {Γ : List PropForm} {A : PropForm} : Proof_CF → Proof 
-  --| Proof_CF.id => Proof.id 
-  --sorry
-  --done

@@ -1,17 +1,18 @@
 import MyProject.Definitions
-import MyProject.Lemma
 
 open sequent_calculus
 
-theorem identity : [&0] ⊢ &0 := Proof.id 
+theorem transport_CF {Γ Δ : List PropForm} {A : PropForm} : (Γ ++ Δ  ⊢₁ A) → (Δ ++ Γ ⊢₁ A)  := by
+  intro h
+  have this : [] ++ Δ  ++ [] ++ Γ  ++ [] = Δ  ++ Γ := by
+    simp
+  rw [← this]
+  apply Proof_CF.com
+  simp
+  assumption
 
-theorem modus_ponens : [&0 → &1, &0] ⊢ &1 := by 
-  apply Proof.limpl
-  . apply Proof.id 
-  . change [] ++ [&1] ++ [] ++ [&0] ++ [] ⊢ &1
-    apply Proof.com
-    apply Proof.wek [&0]
-    apply Proof.id
+theorem modus_ponens {A B : PropForm} : [A, A → B] ⊢ B := 
+@Proof.com [] [] [] _ [_] [_] (Proof.limpl (@Proof.id A) (@Proof.com [] [] [] _ [_] [_] (Proof.wek [A] (@Proof.id B))))
 
 theorem disjunctive_syllogism : [&0 ∨ &1, ¬ &0] ⊢ &1 := by
   apply Proof.ldisj
