@@ -50,11 +50,19 @@ example : Complexity (¬ ((&0 ∧ &1) → &0)) = 3 := by trivial
 --Define proof tree of a given sequent Γ ⊢ A inductively, using sequnent calculus.
 
 inductive Proof : List PropForm → PropForm → Type where
+  --The choice of list is not the most pleasant thing but it seems to be the best option so far.
   | id : Proof [A] A
+  --We use simpler axioms and add weakening as an inference rule.
+  --It is both for aesthetic reason and possible expedition to substructural logics in the future. 
   | exfal : Proof [⊥] A
-  | com (Γ Δ : List PropForm) : Proof (Θ ++ Γ ++ Λ ++ Δ ++ Ξ) C → Proof (Θ ++ Δ ++ Λ ++ Γ ++ Ξ) C 
+  | com (Γ Δ : List PropForm) : Proof (X ++ Γ ++ Y ++ Δ ++ Z) C → Proof (X ++ Δ ++ Y ++ Γ ++ Z) C 
+  --It is a extremely annoying rule to deal with. 
+  --We can remove it if we generalize all other rules to allow arbitary position.
+  --However, that would seemingly make all other rules equally annoying. 
+  --We will stick to this commutative rule until find a better resolution.
   | wek (Δ : List PropForm) : Proof Γ A → Proof (Δ ++ Γ) A
   | contr (Δ : List PropForm) : Proof (Δ ++ Δ ++ Γ) B → Proof (Δ ++ Γ) B
+  --Both weakening and contraction are structural rules because our mutliplicative cut rule.
   | rimpl : Proof (A :: Γ) B → Proof Γ (A → B)
   | limpl : Proof Γ A →  Proof (B :: Γ) C  → Proof ((A → B) :: Γ) C
   | rconj : Proof Γ A → Proof Γ B → Proof Γ (A ∧ B)
@@ -64,11 +72,12 @@ inductive Proof : List PropForm → PropForm → Type where
   | rdisjr : Proof Γ B  → Proof Γ (A ∨ B)
   | ldisj : Proof (A :: Γ) C  → Proof (B :: Γ) C → Proof ((A ∨ B) :: Γ) C 
   | cut : Proof Γ₀ A →  Proof (A :: Γ₁) B → Proof (Γ₀ ++ Γ₁) B 
+  --Notice the cut rule is multiplicative while other logic rules are additive.
 
 inductive Proof_CF : List PropForm → PropForm → Type where
   | id : Proof_CF [A] A
   | exfal : Proof_CF [⊥] A
-  | com (Γ Δ : List PropForm) : Proof_CF (Θ ++ Γ ++ Λ ++ Δ ++ Ξ) C → Proof_CF (Θ ++ Δ ++ Λ ++ Γ ++ Ξ) C 
+  | com (Γ Δ : List PropForm) : Proof_CF (X ++ Γ ++ Y ++ Δ ++ Z) C → Proof_CF (X ++ Δ ++ Y ++ Γ ++ Z) C 
   | wek (Δ : List PropForm) : Proof_CF Γ A → Proof_CF (Δ ++ Γ) A
   | contr (Δ : List PropForm) : Proof_CF (Δ ++ Δ ++ Γ) B → Proof_CF (Δ ++ Γ) B
   | rimpl : Proof_CF (A :: Γ) B → Proof_CF Γ (A → B)
