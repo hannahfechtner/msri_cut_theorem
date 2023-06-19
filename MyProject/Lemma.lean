@@ -1,5 +1,6 @@
 import MyProject.Definitions
 import MyProject.Properties
+import MyProject.Size
 
 open sequent_calculus
 
@@ -113,72 +114,104 @@ theorem or_principal_left {Γ₁ Γ₂ : List PropForm}
   --   apply Proof_CF.rdisjl
   --   exact hauptschatz d
 
-
-def rimpl_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A → B) →  (A :: Γ ⊢ B)
-:= by sorry  
-  -- | Proof.id => modus_ponens 
-  -- | Proof.exfal => Proof.wek [A] (@Proof.exfal B)
-  -- | @Proof.com U V W _ X Y p => by
-  --   change (A :: U) ++ Y ++ V ++ X ++ W ⊢ _   
-  --   apply @Proof.com (A :: U) V W B X Y (rimpl_inv p)
-  -- | @Proof.wek X _ Y p => by  
-  --   change [] ++ [A] ++ [] ++ Y ++ X ⊢ B
-  --   apply Proof.com
-  --   simp
-  --   apply Proof.wek Y (rimpl_inv p)
-  -- | @Proof.contr Y _ X p => by 
-  --   change [] ++ [A] ++ [] ++ X ++ Y ⊢ B
-  --   apply Proof.com
-  --   simp
-  --   apply Proof.contr 
-  --   have : [] ++ [] ++ (X ++ X) ++ [A] ++ Y = X ++ X ++ A :: Y := by
-  --     simp
-  --   rw [← this]
-  --   apply Proof.com
-  --   simp
-  --   simp at p
-  --   apply rimpl_inv p
-  -- | Proof.rimpl p => p
-  -- | @Proof.limpl X P Q _ p q => by 
-  --   change [] ++ [A] ++ [] ++ [P → Q] ++ X ⊢ B
-  --   apply Proof.com
-  --   apply Proof.limpl
-  --   . apply Proof.wek [A] p
-  --   . change [] ++ [Q] ++ [] ++ [A] ++ X ⊢ B
-  --     apply Proof.com
-  --     apply rimpl_inv q
-  -- | @Proof.lconjr Q X _ P p => by 
-  --   change [] ++ [A] ++ [] ++ [P ∧ Q] ++ X ⊢ B
-  --   apply Proof.com
-  --   apply Proof.lconjr
-  --   change [] ++ [Q] ++ [] ++ [A] ++ X ⊢ B
-  --   apply Proof.com
-  --   apply rimpl_inv p
-  -- | @Proof.lconjl P X _ Q p => by 
-  --   change [] ++ [A] ++ [] ++ [P ∧ Q] ++ X ⊢ B
-  --   apply Proof.com
-  --   apply Proof.lconjl
-  --   change [] ++ [P] ++ [] ++ [A] ++ X ⊢ B
-  --   apply Proof.com
-  --   apply rimpl_inv p  
-  -- | @Proof.ldisj P X _ Q p q => by
-  --   change [] ++ [A] ++ [] ++ [P ∨ Q] ++ X ⊢ B
-  --   apply Proof.com
-  --   apply Proof.ldisj
-  --   . change [] ++ [P] ++ [] ++ [A] ++ X ⊢ B 
-  --     apply Proof.com
-  --     apply rimpl_inv p  
-  --   . change [] ++ [Q] ++ [] ++ [A] ++ X ⊢ B 
-  --     apply Proof.com
-  --     apply rimpl_inv q 
-  -- | @Proof.cut V C W _ p q => by
-  --   change [] ++ [A] ++ [] ++ V ++ W ⊢ B
-  --   apply Proof.com
-  --   simp
-  --   apply Proof.cut (A := C)
-  --   . assumption
-  --   . apply Proof.com (X := []) (Y := []) (Z := W) (Γ := [A]) (Δ := [C])
-  --     apply rimpl_inv q 
+def rimpl_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A → B) →  ([A] ++ Γ ⊢ B)
+  | Proof.id => by
+    change [] ++ [A] ++ [] ++ [A → B] ++ [] ⊢ B
+    apply Proof.com
+    apply Proof.limpl
+    . apply Proof.id
+    . apply @Proof.com [] [] [] _ [_] [_]
+      simp
+      apply Proof.wek [A]
+      apply Proof.id
+  | Proof.exfal => Proof.wek [A] (@Proof.exfal B)
+  | @Proof.com U V W _ X Y p => by
+    have : Proof_size p < Proof_size (Proof.com X Y p) := by
+      simp [Proof_size]
+    change (A :: U) ++ Y ++ V ++ X ++ W ⊢ B   
+    apply @Proof.com (A :: U) V W B X Y (rimpl_inv p) 
+  | @Proof.wek X _ Y p => by
+    have : Proof_size p < Proof_size (Proof.wek Y p) := by
+      simp [Proof_size]
+    change [] ++ [A] ++ [] ++ Y ++ X ⊢ B
+    apply Proof.com
+    simp
+    apply Proof.wek Y (rimpl_inv p)
+  | @Proof.contr Y _ X p => by 
+    change [] ++ [A] ++ [] ++ X ++ Y ⊢ B
+    have h : (X ++ X ++ Y ⊢ A → B) = (X ++ (X ++ Y) ⊢ A → B) := by
+      simp [Proof]   
+    have : Proof_size (cast h p) < Proof_size (Proof.contr X p) := by
+      rw [cast_same_size h]
+      simp [Proof_size]
+    apply Proof.com
+    simp
+    apply Proof.contr 
+    have this : [] ++ (X ++ X) ++ [] ++ [A] ++ Y = X ++ X ++ A :: Y := by
+       simp
+    rw [←this]
+    apply Proof.com
+    simp
+    simp at p
+    apply rimpl_inv p
+  | Proof.rimpl p => p
+  | @Proof.limpl X P Q _ p q => by 
+    have : Proof_size q < Proof_size (Proof.limpl p q) := by
+      simp [Proof_size]
+      linarith 
+    change [] ++ [A] ++ [] ++ [P → Q] ++ X ⊢ B
+    apply Proof.com
+    apply Proof.limpl
+    . apply Proof.wek [A] p
+    . change [] ++ [Q] ++ [] ++ [A] ++ X ⊢ B
+      apply Proof.com
+      apply rimpl_inv q
+  | @Proof.lconjr Q X _ P p => by 
+    have : Proof_size p < Proof_size (@Proof.lconjr Q X (A → B) P p) := by
+      simp [Proof_size]
+    change [] ++ [A] ++ [] ++ [P ∧ Q] ++ X ⊢ B
+    apply Proof.com
+    apply Proof.lconjr
+    change [] ++ [Q] ++ [] ++ [A] ++ X ⊢ B
+    apply Proof.com
+    apply rimpl_inv p
+  | @Proof.lconjl P X _ Q p => by 
+    have : Proof_size p < Proof_size (@Proof.lconjl P X (A → B) P p) := by
+      simp [Proof_size]
+    change [] ++ [A] ++ [] ++ [P ∧ Q] ++ X ⊢ B
+    apply Proof.com
+    apply Proof.lconjl
+    change [] ++ [P] ++ [] ++ [A] ++ X ⊢ B
+    apply Proof.com
+    apply rimpl_inv p  
+  | @Proof.ldisj P X _ Q p q => by
+    change [] ++ [A] ++ [] ++ [P ∨ Q] ++ X ⊢ B
+    apply Proof.com
+    apply Proof.ldisj
+    . have : Proof_size p < Proof_size (Proof.ldisj p q) := by
+        simp [Proof_size]
+        linarith
+      change [] ++ [P] ++ [] ++ [A] ++ X ⊢ B 
+      apply Proof.com
+      apply rimpl_inv p  
+    . have : Proof_size q < Proof_size (Proof.ldisj p q) := by
+        simp [Proof_size]
+        linarith
+      change [] ++ [Q] ++ [] ++ [A] ++ X ⊢ B 
+      apply Proof.com
+      apply rimpl_inv q 
+  | @Proof.cut V C W _ p q => by
+    have : Proof_size q < Proof_size (Proof.cut p q) := by
+      simp [Proof_size]
+      linarith
+    change [] ++ [A] ++ [] ++ V ++ W ⊢ B
+    apply Proof.com
+    simp
+    apply Proof.cut (A := C)
+    . assumption
+    . apply Proof.com (X := []) (Y := []) (Z := W) (Γ := [A]) (Δ := [C])
+      apply rimpl_inv q 
+termination_by rimpl_inv p => Proof_size p  
 
 def rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → ((Γ ⊢ A) × (Γ ⊢ B))
   | Proof.id => (Proof.lconjl (@Proof.id A), Proof.lconjr (@Proof.id B))
@@ -194,6 +227,33 @@ def rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → ((Γ 
   | Proof.cut D E => (Proof.cut D (rconj_inv E).1, (Proof.cut D (rconj_inv E).2))
                                   
 
-def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → ((A :: Γ ⊢ C) × (B :: Γ ⊢ C)) 
-:= by sorry   
-  -- | Proof.id => (Proof.rdisjl (@Proof.id A), Proof.rdisjr (@Proof.id B))
+def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → ((A :: Γ ⊢ C) × (B :: Γ ⊢ C)) := by
+sorry  
+  -- intro h
+  -- generalize ih : (A ∨ B) :: Γ = Δ 
+  -- --Need to generalize the assumption to avoid dependent elimination issue.
+  -- rw [ih] at h
+  -- cases h
+  -- . have single : (A ∨ B) = C := by 
+  --     apply List.head_eq_of_cons_eq ih
+  --   rw [← single]
+  --   constructor 
+  --   . have deq : A :: Γ = [] ++ [A] ++ [] ++ Γ ++ [] := by simp
+  --     rw [deq]
+  --     apply Proof.com
+  --     simp
+  --     apply Proof.wek Γ (Proof.rdisjl (@Proof.id A))
+  --   . have deq : B :: Γ = [] ++ [B] ++ [] ++ Γ ++ [] := by simp
+  --     rw [deq]
+  --     apply Proof.com
+  --     simp
+  --     apply Proof.wek Γ (Proof.rdisjr (@Proof.id B))
+  -- . have single : (A ∨ B) = PropForm.fls := by 
+  --     apply List.head_eq_of_cons_eq ih
+  --   contradiction
+  --   --Contradiction seems to work for impossibility from definition
+  -- . rename_i X Y Z W V p  
+  --   --apply List.cons_eq_append
+  --   sorry
+  -- . rename_i X Y p
+  --   sorry
