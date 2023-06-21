@@ -31,35 +31,40 @@ def Atomic (P : PropForm) : Prop := Complexity P = 0
 
 prefix: 90 " & " => var 
 
+notation : 90 " ⊥ " => conj (&0 neg (&0))
+
 prefix: 80 " ¬ " => neg
 
--- infixl: 51 " →  " => impl
+infixl: 51 " →  " => fun (A B : PropForm) => disj (neg A) B
 
 infixl: 53 " ∧ " => conj
 
 infixl: 52 " ∨ " => disj
 
+infixl: 51 " ↔ " => fun (A B : PropForm) => conj ((neg A) B) ((neg B) A)
+
+
 -- infixl: 50 " ↔ " => fun (A B : PropForm) => conj (impl A B) (impl B A)
 
---Define proof tree of a given sequent Γ ⊢ A inductively, using sequent calculus.
+--Define proof tree of a given sequent Γ ⊢ A inductively.
 
 inductive Proof : List PropForm → Type where
   | id : Proof [A, ¬ A]
   | com (Γ Δ : List PropForm) : Proof (X ++ Γ ++ Y ++ Δ ++ Z) → Proof (X ++ Δ ++ Y ++ Γ ++ Z)
   | wek (Δ : List PropForm) : Proof Γ → Proof (Δ ++ Γ)
   | contr (Δ : List PropForm) : Proof (Δ ++ Δ ++ Γ) → Proof (Δ ++ Γ)
-  | conj : Proof ([A] ++ Γ) → Proof ([B] ++ Γ) → Proof ([conj A B] ++ Γ)
-  | ldisj : Proof ([A, B] ++ Γ)  → Proof ([disj A B] ++ Γ) 
+  | conj : Proof ([A, B] ++ Γ)  → Proof ([conj A B] ++ Γ) 
+  | disj : Proof ([A] ++ Γ) → Proof ([B] ++ Γ) → Proof ([disj A B] ++ Γ)
   | cut : Proof ([A] ++ Γ₀) →  Proof ([neg A] ++ Γ₁) → Proof (Γ₀ ++ Γ₁) 
 
 
-inductive Proof_Cf : List PropForm → Type where
-  | id : Proof_Cf [A, ¬ A]
-  | com (Γ Δ : List PropForm) : Proof_Cf (X ++ Γ ++ Y ++ Δ ++ Z) → Proof_Cf (X ++ Δ ++ Y ++ Γ ++ Z)
-  | wek (Δ : List PropForm) : Proof_Cf Γ → Proof_Cf (Δ ++ Γ)
-  | contr (Δ : List PropForm) : Proof_Cf (Δ ++ Δ ++ Γ) → Proof_Cf (Δ ++ Γ)
-  | conj : Proof_Cf ([A] ++ Γ) → Proof_Cf ([B] ++ Γ) → Proof_Cf ([conj A B] ++ Γ)
-  | ldisj : Proof_Cf ([A, B] ++ Γ) → Proof_Cf ([disj A B] ++ Γ) 
+inductive Proof_CF : List PropForm → Type where
+  | id : Proof_CF [A, ¬ A]
+  | com (Γ Δ : List PropForm) : Proof_CF (X ++ Γ ++ Y ++ Δ ++ Z) → Proof_CF (X ++ Δ ++ Y ++ Γ ++ Z)
+  | wek (Δ : List PropForm) : Proof_CF Γ → Proof_CF (Δ ++ Γ)
+  | contr (Δ : List PropForm) : Proof_CF (Δ ++ Δ ++ Γ) → Proof_CF (Δ ++ Γ)
+  | conj : Proof_CF ([A, B] ++ Γ)  → Proof_CF ([conj A B] ++ Γ) 
+  | disj : Proof_CF ([A] ++ Γ) → Proof_CF ([B] ++ Γ) → Proof_CF ([disj A B] ++ Γ)
 
 --local notation for valid sequents
 
