@@ -121,7 +121,7 @@ def rimpl_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A → B) →  ([A]
     apply Proof.limpl
     . apply Proof.id
     . apply @Proof.com [] [] [] _ [_] [_]
-      simp
+      simp [List.append_assoc]
       apply Proof.wek [A]
       apply Proof.id
   | Proof.exfal => Proof.wek [A] (@Proof.exfal B)
@@ -135,7 +135,7 @@ def rimpl_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A → B) →  ([A]
       simp [Proof_size]
     change [] ++ [A] ++ [] ++ Y ++ X ⊢ B
     apply Proof.com
-    simp
+    simp [List.append_assoc]
     apply Proof.wek Y (rimpl_inv p)
   | @Proof.contr Y _ X p => by 
     change [] ++ [A] ++ [] ++ X ++ Y ⊢ B
@@ -145,13 +145,13 @@ def rimpl_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A → B) →  ([A]
       rw [cast_same_size h]
       simp [Proof_size]
     apply Proof.com
-    simp
+    simp [List.append_assoc]
     apply Proof.contr 
     have this : [] ++ (X ++ X) ++ [] ++ [A] ++ Y = X ++ X ++ A :: Y := by
        simp
     rw [←this]
     apply Proof.com
-    simp
+    simp [List.append_assoc]
     simp at p
     apply rimpl_inv p
   | Proof.rimpl p => p
@@ -206,7 +206,7 @@ def rimpl_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A → B) →  ([A]
       linarith
     change [] ++ [A] ++ [] ++ V ++ W ⊢ B
     apply Proof.com
-    simp
+    simp [List.append_assoc]
     apply Proof.cut (A := C)
     . assumption
     . apply Proof.com (X := []) (Y := []) (Z := W) (Γ := [A]) (Δ := [C])
@@ -227,8 +227,8 @@ def rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → ((Γ 
   | Proof.cut D E => (Proof.cut D (rconj_inv E).1, (Proof.cut D (rconj_inv E).2))
                                   
 
-def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → ((A :: Γ ⊢ C) × (B :: Γ ⊢ C)) := by
-sorry  
+def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → ((A :: Γ ⊢ C) × (B :: Γ ⊢ C)) := by  
+sorry 
   -- intro h
   -- generalize ih : (A ∨ B) :: Γ = Δ 
   -- --Need to generalize the assumption to avoid dependent elimination issue.
@@ -253,7 +253,19 @@ sorry
   --   contradiction
   --   --Contradiction seems to work for impossibility from definition
   -- . rename_i X Y Z W V p  
-  --   --apply List.cons_eq_append
+  --   rw [List.cons_eq_append] at ih
   --   sorry
   -- . rename_i X Y p
+  --   rw [List.cons_eq_append] at ih
   --   sorry
+  -- . rename_i X Y p 
+  --   sorry 
+  -- . rename_i P Q p
+  --   rw [← ih] at p
+  --   constructor
+  --   . apply Proof.rimpl
+      
+
+
+    
+     

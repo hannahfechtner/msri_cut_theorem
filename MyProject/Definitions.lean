@@ -47,10 +47,11 @@ infixl: 50 " ↔ " => fun (A B : PropForm) => conj (impl A B) (impl B A)
 
 example : Complexity (¬ ((&0 ∧ &1) → &0)) = 3 := by trivial      
 
---Define proof tree of a given sequent Γ ⊢ A inductively, using sequnent calculus.
+--Define proof tree of a given sequent Γ ⊢ A inductively, using sequent calculus.
 
 inductive Proof : List PropForm → PropForm → Type where
   --The choice of list is not the most pleasant thing but it seems to be the best option so far.
+  --Tried Multiset, which causes dependent elimination problem for any cases on proofs.
   | id : Proof [A] A
   --We use simpler axioms and add weakening as an inference rule.
   --It is both for aesthetic reason and possible expedition to substructural logics in the future. 
