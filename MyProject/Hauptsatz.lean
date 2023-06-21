@@ -9,7 +9,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
   induction h 
   . apply Proof_CF.id 
   . apply Proof_CF.exfal
-  . case com last => 
+  . case com last =>
     apply Proof_CF.com 
     --rename_i last
     exact last

@@ -224,11 +224,10 @@ def rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → ((Γ 
   | Proof.lconjr D => (Proof.lconjr (rconj_inv D).1, Proof.lconjr (rconj_inv D).2)
   | Proof.lconjl D => (Proof.lconjl (rconj_inv D).1, Proof.lconjl (rconj_inv D).2)
   | Proof.ldisj D E => (Proof.ldisj (rconj_inv D).1 (rconj_inv E).1, (Proof.ldisj (rconj_inv D).2 (rconj_inv E).2))
-  | Proof.cut D E => (Proof.cut D (rconj_inv E).1, (Proof.cut D (rconj_inv E).2))
-                                  
+  | Proof.cut D E => (Proof.cut D (rconj_inv E).1, (Proof.cut D (rconj_inv E).2))            
 
 def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → ((A :: Γ ⊢ C) × (B :: Γ ⊢ C)) := by  
-sorry 
+ sorry 
   -- intro h
   -- generalize ih : (A ∨ B) :: Γ = Δ 
   -- --Need to generalize the assumption to avoid dependent elimination issue.
@@ -262,10 +261,7 @@ sorry
   --   sorry 
   -- . rename_i P Q p
   --   rw [← ih] at p
-  --   constructor
-  --   . apply Proof.rimpl
-      
-
-
-    
-     
+  --   have this := ldisj_inv (@Proof.com [] [] Γ Q [P] [A ∨ B] p)
+  --   simp [List] at this 
+  --   have that := @Proof.com [] [] Γ Q [A] [A ∨ B] this.1
+  --   sorry
