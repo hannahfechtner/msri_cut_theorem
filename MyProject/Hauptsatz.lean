@@ -1,6 +1,6 @@
 import MyProject.Definitions
 import MyProject.Size
-import MyProject.Lemma
+import MyProject.Lemmas
 
 open sequent_calculus
 

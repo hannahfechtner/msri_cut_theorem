@@ -140,13 +140,13 @@ def rimpl_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A → B) →  ([A]
   | @Proof.contr Y _ X p => by 
     change [] ++ [A] ++ [] ++ X ++ Y ⊢ B
     have h : (X ++ X ++ Y ⊢ A → B) = (X ++ (X ++ Y) ⊢ A → B) := by
-      simp [Proof]   
+      simp [List]
     have : Proof_size (cast h p) < Proof_size (Proof.contr X p) := by
       rw [cast_same_size h]
       simp [Proof_size]
     apply Proof.com
     simp [List.append_assoc]
-    apply Proof.contr 
+    apply Proof.contr  
     have this : [] ++ (X ++ X) ++ [] ++ [A] ++ Y = X ++ X ++ A :: Y := by
        simp
     rw [←this]
@@ -246,8 +246,7 @@ def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) �
       apply Proof.com
       simp
       apply Proof.wek Γ (Proof.rdisjr (@Proof.id B))
-  . have single : (A ∨ B) = PropForm.fls := by 
-      apply List.head_eq_of_cons_eq ih
+  . have := List.head_eq_of_cons_eq ih
     contradiction
     --Contradiction seems to work for impossibility from definition
   . rename_i X Y Z W V p  
@@ -257,6 +256,7 @@ def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) �
     rw [List.cons_eq_append] at ih
     sorry
   . rename_i X Y p 
+    rw [List.cons_eq_append] at ih
     sorry 
   . rename_i P Q p
     rw [← ih] at p
@@ -281,12 +281,11 @@ def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) �
     rw [← ih] at p 
     apply (@Proof.rdisjr (A :: Γ) P Q (ldisj_inv p).1, @Proof.rdisjr (B :: Γ) P Q (ldisj_inv p).2)
   . rename_i P X Q p q 
-    have this : (A = P) ∧ (B = Q) := by
-      sorry
-    have that : Γ = X := by
-      sorry
-    rw [this.1, this.2, that]
-    apply (p, q)
+    have ih1 := List.head_eq_of_cons_eq ih 
+    have ih2 := List.tail_eq_of_cons_eq ih 
+    injection ih1 with ih11 ih12
+    rw [ih2, ih11, ih12] 
+    apply (p,q)
   . rename_i X P Y p q 
     sorry 
   

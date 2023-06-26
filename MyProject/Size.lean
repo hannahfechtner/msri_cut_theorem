@@ -24,8 +24,15 @@ def Proof_size {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ
 
 
 --A lemma dealing with definitional equality between proofs
-def cast_same_size {Γ Δ : List PropForm} {A : PropForm} {p : Γ ⊢ A} (h : (Γ ⊢ A) = (Δ ⊢ A)) : Proof_size (cast h p) = Proof_size p := by
-  sorry 
+def cast_same_size {Γ Δ : List PropForm} {A : PropForm} {p : Proof Γ A} (h : (Proof Γ A) = (Proof Δ A)) : Proof_size (cast h p) = Proof_size p := by
+  have this : Γ = Δ := by 
+    sorry
+  sorry
+
+variable (X Y : List PropForm) (A : PropForm)
+
+example : [A] ++ Y =  A :: Y := by
+  rfl 
 
 --may need to subtly change this format to show it's simulataneous on D and E
 def Data_Cut {Γ₁ Γ₂  : List PropForm} {A C : PropForm} (D : Proof Γ₁ A) (E : Proof (A::Γ₂) C) : ℕ × ℕ × ℕ := (Complexity A, Proof_size D, Proof_size E) 
