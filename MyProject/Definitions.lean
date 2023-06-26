@@ -13,8 +13,13 @@ inductive PropForm : Type where
   | impl : PropForm → PropForm → PropForm
   | conj : PropForm → PropForm → PropForm
   | disj : PropForm → PropForm → PropForm
+  deriving Repr, DecidableEq
 
 open PropForm
+
+def PropForm.neg (A : PropForm) : PropForm := impl A fls
+
+def PropForm.equiv (A B : PropForm) : PropForm := conj (impl A B) (impl B A)
 
 --Define complexity inductively for propositons.
 
@@ -24,7 +29,6 @@ def Complexity : PropForm → ℕ
   | impl P Q =>  (Complexity P) + (Complexity Q) + 1
   | conj P Q =>  (Complexity P) + (Complexity Q) + 1
   | disj P Q =>  (Complexity P) + (Complexity Q) + 1
-
 --In particular, atomic propositions are those of complexity 0.
 
 def Atomic (P : PropForm) : Prop := Complexity P = 0 
@@ -35,7 +39,7 @@ prefix: 90 " & " => var
 
 notation: 70 " ⊥ " => fls
 
-prefix: 80 " ¬ " => fun (A : PropForm) => impl A fls
+prefix: 80 " ¬ " => neg
 
 infixl: 51 " →  " => impl
 
@@ -43,9 +47,9 @@ infixl: 53 " ∧ " => conj
 
 infixl: 52 " ∨ " => disj
 
-infixl: 50 " ↔ " => fun (A B : PropForm) => conj (impl A B) (impl B A)
+infixl: 50 " ↔ " => equiv
 
-example : Complexity (¬ ((&0 ∧ &1) → &0)) = 3 := by trivial      
+-- #eval Complexity (¬ ((&0 ∧ &1) → &0))  
 
 --Define proof tree of a given sequent Γ ⊢ A inductively, using sequent calculus.
 

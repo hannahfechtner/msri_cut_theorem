@@ -227,41 +227,70 @@ def rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → ((Γ 
   | Proof.cut D E => (Proof.cut D (rconj_inv E).1, (Proof.cut D (rconj_inv E).2))            
 
 def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → ((A :: Γ ⊢ C) × (B :: Γ ⊢ C)) := by  
- sorry 
-  -- intro h
-  -- generalize ih : (A ∨ B) :: Γ = Δ 
-  -- --Need to generalize the assumption to avoid dependent elimination issue.
-  -- rw [ih] at h
-  -- cases h
-  -- . have single : (A ∨ B) = C := by 
-  --     apply List.head_eq_of_cons_eq ih
-  --   rw [← single]
-  --   constructor 
-  --   . have deq : A :: Γ = [] ++ [A] ++ [] ++ Γ ++ [] := by simp
-  --     rw [deq]
-  --     apply Proof.com
-  --     simp
-  --     apply Proof.wek Γ (Proof.rdisjl (@Proof.id A))
-  --   . have deq : B :: Γ = [] ++ [B] ++ [] ++ Γ ++ [] := by simp
-  --     rw [deq]
-  --     apply Proof.com
-  --     simp
-  --     apply Proof.wek Γ (Proof.rdisjr (@Proof.id B))
-  -- . have single : (A ∨ B) = PropForm.fls := by 
-  --     apply List.head_eq_of_cons_eq ih
-  --   contradiction
-  --   --Contradiction seems to work for impossibility from definition
-  -- . rename_i X Y Z W V p  
-  --   rw [List.cons_eq_append] at ih
-  --   sorry
-  -- . rename_i X Y p
-  --   rw [List.cons_eq_append] at ih
-  --   sorry
-  -- . rename_i X Y p 
-  --   sorry 
-  -- . rename_i P Q p
-  --   rw [← ih] at p
-  --   have this := ldisj_inv (@Proof.com [] [] Γ Q [P] [A ∨ B] p)
-  --   simp [List] at this 
-  --   have that := @Proof.com [] [] Γ Q [A] [A ∨ B] this.1
-  --   sorry
+  intro h
+  generalize ih : (A ∨ B) :: Γ = Δ 
+  --Need to generalize the assumption to avoid dependent elimination issue.
+  rw [ih] at h
+  cases h
+  . have single : (A ∨ B) = C := by 
+      apply List.head_eq_of_cons_eq ih
+    rw [← single]
+    constructor 
+    . have deq : A :: Γ = [] ++ [A] ++ [] ++ Γ ++ [] := by simp
+      rw [deq]
+      apply Proof.com
+      simp
+      apply Proof.wek Γ (Proof.rdisjl (@Proof.id A))
+    . have deq : B :: Γ = [] ++ [B] ++ [] ++ Γ ++ [] := by simp
+      rw [deq]
+      apply Proof.com
+      simp
+      apply Proof.wek Γ (Proof.rdisjr (@Proof.id B))
+  . have single : (A ∨ B) = PropForm.fls := by 
+      apply List.head_eq_of_cons_eq ih
+    contradiction
+    --Contradiction seems to work for impossibility from definition
+  . rename_i X Y Z W V p  
+    rw [List.cons_eq_append] at ih
+    sorry
+  . rename_i X Y p
+    rw [List.cons_eq_append] at ih
+    sorry
+  . rename_i X Y p 
+    sorry 
+  . rename_i P Q p
+    rw [← ih] at p
+    have iih := ldisj_inv (@Proof.com [] [] Γ Q [P] [A ∨ B] p)
+    simp [List] at iih 
+    apply (Proof.rimpl (@Proof.com [] [] Γ Q [A] [P] (iih.1)), Proof.rimpl (@Proof.com [] [] Γ Q [B] [P] (iih.2)))
+  . have := List.head_eq_of_cons_eq ih 
+    contradiction
+    --Nice!
+  . rename_i P Q p q 
+    rw [← ih] at p 
+    rw [← ih] at q
+    apply (Proof.rconj (ldisj_inv p).1  (ldisj_inv q).1, Proof.rconj (ldisj_inv p).2 (ldisj_inv q).2) 
+  . have := List.head_eq_of_cons_eq ih 
+    contradiction
+  . have := List.head_eq_of_cons_eq ih 
+    contradiction
+  . rename_i P Q p
+    rw [← ih] at p 
+    apply (@Proof.rdisjl (A :: Γ) P Q (ldisj_inv p).1, @Proof.rdisjl (B :: Γ) P Q (ldisj_inv p).2)
+  . rename_i P Q p
+    rw [← ih] at p 
+    apply (@Proof.rdisjr (A :: Γ) P Q (ldisj_inv p).1, @Proof.rdisjr (B :: Γ) P Q (ldisj_inv p).2)
+  . rename_i P X Q p q 
+    have this : (A = P) ∧ (B = Q) := by
+      sorry
+    have that : Γ = X := by
+      sorry
+    rw [this.1, this.2, that]
+    apply (p, q)
+  . rename_i X P Y p q 
+    sorry 
+  
+
+
+
+
