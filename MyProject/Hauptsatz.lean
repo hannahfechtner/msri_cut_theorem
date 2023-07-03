@@ -1,6 +1,6 @@
 import MyProject.Definitions
 import MyProject.Size
-import MyProject.Lemma
+import MyProject.Lemmas
 
 open sequent_calculus
 
@@ -9,7 +9,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
   induction h 
   . apply Proof_CF.id 
   . apply Proof_CF.exfal
-  . case com last => 
+  . case com last =>
     apply Proof_CF.com 
     --rename_i last
     exact last
@@ -93,7 +93,7 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       apply hauptsatz 
       apply @Proof.cut _ (&N)
       . apply CF_C (hauptsatz (Proof.cut b c))
-      . apply CF_C hauptsatz e
+      . apply CF_C (hauptsatz e)
     
     -- here below is the bot case
   . cases' d
@@ -428,6 +428,8 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       rw [h']
       exact b
     sorry
+    sorry
+    sorry
 
     --here below is the disj case
   . rename_i X Y a b 
@@ -486,4 +488,4 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       . apply CF_C (hauptsatz (Proof.cut p q))
       . apply CF_C (hauptsatz e)
 
-  termination_by hauptsatz A => Data_Cut A 
+  termination_by hauptsatz A => Proof_size A 
