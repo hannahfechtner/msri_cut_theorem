@@ -193,7 +193,6 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → (Γ ⊢�
       apply Proof_CF.wek
       apply hauptsatz
       exact d 
-
     . rename_i one two three
       apply Proof_CF.rimpl
       apply hauptsatz
