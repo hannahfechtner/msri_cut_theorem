@@ -170,115 +170,95 @@ def rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → ((Γ 
   | Proof.ldisj D E => (Proof.ldisj (rconj_inv D).1 (rconj_inv E).1, (Proof.ldisj (rconj_inv D).2 (rconj_inv E).2))
   | Proof.cut D E => (Proof.cut D (rconj_inv E).1, (Proof.cut D (rconj_inv E).2))            
 
-def lconj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∧ B) :: Γ ⊢ C) → (A :: B :: Γ ⊢ C) := by 
+def lconj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∧ B) :: Γ ⊢ C) → (A :: B :: Γ ⊢ C) := by
   sorry
+  -- intro h
+  -- generalize ih : (A ∧ B) :: Γ = Δ 
+  -- rw [ih] at h
+  -- cases h
+  -- . injection ih with ih1 ih2
+  --   rw [ih2, ← ih1]  
+  --   change [] ++ [A] ++ [] ++ [B] ++ [] ⊢ A ∧ B
+  --   apply  Proof.rconj (@Proof.com [] [] [] _ [_] [_] (Proof.wek [B] (@Proof.id A))) (Proof.wek [A] (@Proof.id B))
+  -- . injection ih
+  --   contradiction
+  -- . sorry
+  -- . sorry
+  -- . sorry
+  -- . sorry
+  -- . injection ih 
+  --   contradiction
+  -- . sorry
+  -- . sorry
+  -- . sorry
+  -- . sorry
+  -- . sorry 
+  -- . injection ih 
+  --   contradiction
+  -- . sorry
 
 def ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → ((A :: Γ ⊢ C) × (B :: Γ ⊢ C)) := by  
   sorry
 --   intro h
---   generalize ih : (A ∨ B) :: Γ = Δ 
---   --Need to generalize the assumption to avoid dependent elimination issue.
+--   generalize ih : (A ∨ B) :: Γ = Δ
 --   rw [ih] at h
---   cases h
---   . have single : (A ∨ B) = C := by 
---       apply List.head_eq_of_cons_eq ih
---     rw [← single]
---     constructor 
---     . have deq : A :: Γ = [] ++ [A] ++ [] ++ Γ ++ [] := by simp
---       rw [deq]
---       apply Proof.com
---       simp
---       apply Proof.wek Γ (Proof.rdisjl (@Proof.id A))
---     . have deq : B :: Γ = [] ++ [B] ++ [] ++ Γ ++ [] := by simp
---       rw [deq]
---       apply Proof.com
---       simp
---       apply Proof.wek Γ (Proof.rdisjr (@Proof.id B))
---   . have := List.head_eq_of_cons_eq ih
+--   cases h 
+--   . injection ih with ihd iht
+--     rw [← ihd, iht]
+--     apply (Proof.rdisjl B (Proof.id A), Proof.rdisjr A (Proof.id B))
+--   . injection ih
 --     contradiction
---     --Contradiction seems to work for impossibility from definition
---   . rename_i X Y Z W V p  
---     --rw [List.cons_eq_append] at ih
---     --there is a problem with eliminating Prop into types. 
---     --it makes sense though in the light of proof irrelevance, which now I have mixed feelings with. 
---     --the solution is still a nightmare for Proof.com
+--   . rename_i X Y Z P Q p 
 --     cases X 
---     . cases V
---       . cases Y 
---         . cases W 
---           . cases Z
---             . contradiction 
---             . rename_i P U 
---               change (A ∨ B) :: Γ = P :: U at ih
---               change P :: U ⊢ C at p
---               injection ih with ih1 ih2
---               rw [← ih1] at p
---               sorry  
---           . sorry
---         . rename_i P U
---           rw [List.append_nil, ← List.append_nil ([] ++ W)] at p
---           have := Proof.com W (P :: U) p
---           sorry
---       . sorry
---     . sorry
---   . rename_i X Y p
---     --find the solution to the problem. We cannot apply List.cons_eq_append because it will lose contructive feature by mapping into Prop.
---     --instead, we perform the proof of List.cons_eq_append locally.
---     cases Y 
---     . change (A ∨ B) :: Γ = X at ih
---       rw [← ih] at p
---       apply ldisj_inv p
---       --there is no way to avoid talking about cast, it seems. 
---     . rename_i P Z
---       injection ih with ih1 ih2 
---       rw [ih2]
---       apply (Proof.wek (A :: Z) p, Proof.wek (B :: Z) p)
---   . rename_i X Y p 
---     cases Y
---     . change (A ∨ B) :: Γ = X at ih 
---       rw [← ih] at p 
---       apply ldisj_inv p
---     . rename_i P Z
---       injection ih with ih1 ih2 
---       rw [ih2]
---       rw [← ih1] at p 
---       apply ldisj_inv (Proof.contr ((A ∨ B) :: Z) p)
+--     . injection ih with ihh iht
+--       rw [← ihh] at p
+--       rw [iht]
+--       apply ldisj_inv (Proof.com P (A ∨ B) p)
+--     . rename_i R U
+--       injection ih with ihh iht
+--       rw [← ihh] at p
+--       rw [iht]
+--       have := (ldisj_inv p).1
+--       sorry
+--     -- It is almost done but I realize I need a further lemma for Proof.com case.
+--   . rename_i X P p 
+--     injection ih with ihh iht
+--     rw [← iht] at p 
+--     apply (Proof.wek A p, Proof.wek B p) 
+--   . rename_i P X p
+--     injection ih with ihh iht
+--     rw [← iht, ← ihh] at p 
+--     apply (Proof.contr (ldisj_inv (@Proof.com [] [] Γ _ A (A ∨ B) (ldisj_inv p).1)).1, 
+--     Proof.contr (ldisj_inv (@Proof.com [] [] Γ _ B (A ∨ B) (ldisj_inv p).2)).2)
 --   . rename_i P Q p
 --     rw [← ih] at p
---     have iih := ldisj_inv (@Proof.com [] [] Γ Q [P] [A ∨ B] p)
---     simp [List] at iih 
---     apply (Proof.rimpl (@Proof.com [] [] Γ Q [A] [P] (iih.1)), Proof.rimpl (@Proof.com [] [] Γ Q [B] [P] (iih.2)))
---   . have := List.head_eq_of_cons_eq ih 
+--     have iih := ldisj_inv (@Proof.com [] [] Γ _ P (A ∨ B) p)
+--     apply (Proof.rimpl (@Proof.com [] [] Γ _ A P (iih.1)), 
+--     Proof.rimpl (@Proof.com [] [] Γ _ B P (iih.2)))
+--   . injection ih
 --     contradiction
---     --Nice!
---   . rename_i P Q p q 
---     rw [← ih] at p 
---     rw [← ih] at q
---     apply (Proof.rconj (ldisj_inv p).1  (ldisj_inv q).1, Proof.rconj (ldisj_inv p).2 (ldisj_inv q).2) 
---   . have := List.head_eq_of_cons_eq ih 
+--   . rename_i P Q p q
+--     rw [← ih] at p q
+--     apply (Proof.rconj (ldisj_inv p).1 (ldisj_inv q).1
+--     , Proof.rconj (ldisj_inv p).2 (ldisj_inv q).2)
+--   . injection ih
 --     contradiction
---   . have := List.head_eq_of_cons_eq ih 
+--   . injection ih
 --     contradiction
---   . rename_i P Q p
+--   . rename_i P Q p 
 --     rw [← ih] at p 
---     apply (@Proof.rdisjl (A :: Γ) P Q (ldisj_inv p).1, @Proof.rdisjl (B :: Γ) P Q (ldisj_inv p).2)
---   . rename_i P Q p
+--     apply (Proof.rdisjl Q (ldisj_inv p).1, Proof.rdisjl Q (ldisj_inv p).2)
+--   . rename_i Q P p 
 --     rw [← ih] at p 
---     apply (@Proof.rdisjr (A :: Γ) P Q (ldisj_inv p).1, @Proof.rdisjr (B :: Γ) P Q (ldisj_inv p).2)
---   . rename_i P X Q p q 
---     have ih1 := List.head_eq_of_cons_eq ih 
---     have ih2 := List.tail_eq_of_cons_eq ih 
---     injection ih1 with ih11 ih12
---     rw [ih2, ih11, ih12] 
---     apply (p,q)
---   . rename_i X P Y p q 
---     cases X
---     . change (A ∨ B) :: Γ = Y at ih
---       rw [← ih] at q
---       apply ldisj_inv (Proof.cut p q)
---     . rename_i Q X 
---       injection ih with ih1 ih2
---       rw [ih2] 
---       rw [← ih1] at p 
---       apply ldisj_inv (Proof.cut p q)
+--     apply (Proof.rdisjr P (ldisj_inv p).1, Proof.rdisjr P (ldisj_inv p).2)
+--   . rename_i P X Q p q
+--     injection ih with ihh iht
+--     injection ihh with ihh1 ihh2
+--     rw [← ihh1, ← iht] at p
+--     rw [← ihh2, ← iht] at q
+--     apply (p, q)
+--   . rename_i P p q
+--     rw [← ih] at p q
+--     apply (Proof.cut (ldisj_inv p).1 (@Proof.com [] [] Γ _ A P (ldisj_inv (@Proof.com [] [] Γ _ P (A ∨ B) q)).1),
+--     Proof.cut (ldisj_inv p).2 (@Proof.com [] [] Γ _ B P (ldisj_inv (@Proof.com [] [] Γ _ P (A ∨ B) q)).2))
 -- termination_by ldisj_inv p => Proof_size p  

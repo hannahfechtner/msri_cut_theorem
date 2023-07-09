@@ -22,7 +22,6 @@ def Proof_size {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ
   | Proof.ldisj D E =>  (Proof_size D) + (Proof_size E) +1
   | Proof.cut D E =>  (Proof_size D) + (Proof_size E) + 1
 
-
 --A lemma dealing with definitional equality between proofs
 def cast_same_size {Γ Δ : List PropForm} {A : PropForm} {p : Proof Γ A} (ih : Γ = Δ) (h : (Proof Γ A) = (Proof Δ A)) : Proof_size (cast h p) = Proof_size p := by  
   apply congr_heq
