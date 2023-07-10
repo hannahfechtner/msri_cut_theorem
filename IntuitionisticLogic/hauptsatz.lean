@@ -145,9 +145,15 @@ lemma rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → Γ 
   | Proof.cut p q => (Proof.cut p (rconj_inv q).1, (Proof.cut p (rconj_inv q).2))        
 
 lemma lconj_inv {Γ : List PropForm} {A B C : PropForm} : ((A ∧ B) :: Γ ⊢ C) → A :: B :: Γ ⊢ C := by 
+  intro h
+  generalize g : (A ∧ B) :: Γ = Δ 
+  rw [g] at h
   sorry
 
 lemma ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → A :: Γ ⊢ C × B :: Γ ⊢ C := by  
+  intro h
+  generalize g : (A ∨ B) :: Γ = Δ 
+  rw [g] at h
   sorry
 
 theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → Γ ⊢₁ A
@@ -164,11 +170,59 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → Γ ⊢₁
   | Proof.rdisjr A p => Proof_CF.rdisjr A (hauptsatz p)
   | Proof.rdisjl B p => Proof_CF.rdisjl B (hauptsatz p)
   | Proof.ldisj p q => Proof_CF.ldisj (hauptsatz p) (hauptsatz q)
-  | @Proof.cut _ B _ p q => 
-    match B with 
-    | var n => by sorry
-    | fls => by sorry
-    | impl P Q => by sorry
+  | @Proof.cut _ B _ p q => match B with 
+    | var n => match p with 
+      | Proof.id _ => by sorry
+      | Proof.exfal _ => by sorry
+      | Proof.com _ _ _ _ => by sorry
+      | Proof.wek _ _ => by sorry
+      | Proof.contr _ => by sorry
+      | Proof.limpl _ _ => by sorry
+      | Proof.lconjr _ _ => by sorry
+      | Proof.lconjl _ _ => by sorry
+      | Proof.ldisj _ _ => by sorry
+      | Proof.cut _ _ => by sorry
+    | fls => match p with 
+      | Proof.id _ => by sorry
+      | Proof.exfal _ => by sorry
+      | Proof.com _ _ _ _ => by sorry
+      | Proof.wek _ _ => by sorry
+      | Proof.contr _ => by sorry
+      | Proof.limpl _ _ => by sorry
+      | Proof.lconjr _ _ => by sorry
+      | Proof.lconjl _ _ => by sorry
+      | Proof.ldisj _ _ => by sorry
+      | Proof.cut _ _ => by sorry
+    | impl P Q => by 
+      generalize g : (P → Q) :: Γ = Δ 
+      rw [g] at q
+      cases q 
+      . sorry
+      . sorry
+      . sorry
+      . sorry 
+      . sorry
+      . sorry      
+      . sorry 
+      . sorry
+      . sorry
+      . sorry 
+      . sorry
+      . sorry      
+      . sorry
+      . sorry
     | conj P Q => hauptsatz (Proof.cut (rconj_inv p).2 (Proof.cut (Proof.wek Q (rconj_inv p).1) (lconj_inv q)))
-    | disj P Q => by sorry
+    | disj P Q => match p with 
+      | Proof.id _ => by sorry
+      | Proof.exfal _ => by sorry      
+      | Proof.com _ _ _ _ => by sorry
+      | Proof.wek _ _ => by sorry
+      | Proof.contr _ => by sorry
+      | Proof.limpl _ _ => by sorry
+      | Proof.lconjr _ _ => by sorry
+      | Proof.lconjl _ _ => by sorry
+      | Proof.rdisjr _ _ => by sorry
+      | Proof.rdisjl _ _ => by sorry
+      | Proof.ldisj _ _ => by sorry
+      | Proof.cut _ _ => by sorry
 termination_by hauptsatz p => (cut_size p, size p)  

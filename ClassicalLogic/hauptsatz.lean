@@ -119,7 +119,7 @@ def cut_size {Γ : List PropForm} {Δ : List PropForm} : Proof Γ Δ  → ℕ
   | @Proof.cut _ A _ p q => cut_size p + cut_size q + complexity A
 
 lemma rneg_inv {Γ Δ : List PropForm} {A : PropForm} : (Γ ⊢ (¬ A) :: Δ) → A :: Γ ⊢ Δ := by 
-  sorry
+  sorry 
 
 lemma lneg_inv {Γ Δ : List PropForm} {A : PropForm} : ((¬ A) :: Γ ⊢ Δ) → Γ ⊢ A :: Δ := by 
   sorry
@@ -135,7 +135,6 @@ lemma rdisj_inv {Γ Δ : List PropForm} {A B : PropForm} : (Γ ⊢ (A ∨ B) :: 
 
 lemma ldisj_inv {Γ Δ : List PropForm} {A B : PropForm} : ((A ∨ B) :: Γ ⊢ Δ) → A :: Γ ⊢ Δ × B :: Γ ⊢ Δ := by 
   sorry
-
 
 theorem hauptsatz {Γ Δ : List PropForm} : (Γ ⊢ Δ) → Γ ⊢₁ Δ
   | Proof.id _ => Proof_CF.id _
