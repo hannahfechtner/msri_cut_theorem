@@ -86,10 +86,12 @@ infixl: 40 " ⊢ " => Proof
 
 infixl: 40 " ⊢₁ " => Proof_CF
 
+--several measures that help to show termination of recursions
+
 def size {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ
   | Proof.id _ => 1
   | Proof.exfal _ => 1
-  | Proof.com _ _ _ p => size p + 1
+  | Proof.com _ _ _ p => size p 
   | Proof.wek _ p => size p + 1
   | Proof.contr p => size p + 1
   | Proof.rimpl p => size p +1
@@ -101,6 +103,22 @@ def size {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ
   | Proof.rdisjr _ p => size p + 1
   | Proof.ldisj p q => size p + size q + 1
   | Proof.cut p q => size p + size q + 1
+
+def com_size {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ 
+  | Proof.id _ => 0
+  | Proof.exfal _ => 0
+  | Proof.com _ _ _ p => com_size p + 1
+  | Proof.wek _ p => com_size p
+  | Proof.contr p => com_size p
+  | Proof.rimpl p => com_size p
+  | Proof.limpl p q => com_size p + com_size q
+  | Proof.rconj p q => com_size p + com_size q
+  | Proof.lconjl _ p => com_size p
+  | Proof.lconjr _ p => com_size p
+  | Proof.rdisjl _ p => com_size p 
+  | Proof.rdisjr _ p => com_size p
+  | Proof.ldisj p q => com_size p + com_size q
+  | Proof.cut p q => com_size p + com_size q
 
 def cut_size {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ 
   | Proof.id _ => 0
@@ -118,61 +136,146 @@ def cut_size {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ
   | Proof.ldisj p q => cut_size p + cut_size q
   | @Proof.cut _ A _ _ p q => cut_size p + cut_size q + complexity A
 
-def Proof.scom (X Y Z Γ Δ : List PropForm) {A : PropForm} (p : (X ++ Γ ++ Y ++ Δ ++ Z) ⊢ A) : (X ++ Δ ++ Y ++ Γ ++ Z) ⊢ A := by
-  sorry
+--admit strcutural com, wek, and contr for both Proof and Proof_CF
 
-def Proof.swek {Γ : List PropForm} {A : PropForm} (Δ : List PropForm ) (p : Γ ⊢ A) : Δ ++ Γ ⊢ A := by
-  sorry
+def Proof.scom (X Y Z Γ Δ : List PropForm) {A : PropForm} (p : (X ++ Γ ++ Y ++ Δ ++ Z) ⊢ A) : (X ++ Δ ++ Y ++ Γ ++ Z) ⊢ A := 
+  match Γ with 
+  | List.nil => match Δ with 
+    | List.nil => p  
+    | List.cons δ Δt => match Y with 
+      | List.nil => by simpa [List.append_nil, List.nil_append] using p
+      | List.cons y Yt => by 
+        change X ++ ([δ] ++ Δt) ++ ([y] ++ Yt) ++ [] ++ Z ⊢ A
+        rw [List.append_nil, ← List.append_assoc X, ← List.append_assoc, List.append_assoc]
+        apply Proof.com 
+        rw [← List.append_assoc] 
+        apply Proof.scom
+        change X ++ [] ++ ([y] ++ Yt) ++ ([δ] ++ Δt) ++ Z ⊢ A at p
+        rw [List.append_nil, ← List.append_assoc X, ← List.append_assoc _ [δ]] at p
+        assumption
+  | List.cons γ Γt => match Δ with
+    | List.nil => match Y with
+      | List.nil => by simpa [List.append_nil, List.nil_append] using p
+      | List.cons y Yt => by
+        change X ++ [] ++ ([y] ++ Yt) ++ ([γ] ++ Γt) ++ Z ⊢ A
+        rw [List.append_nil, ← List.append_assoc X, ← List.append_assoc, List.append_assoc]
+        apply Proof.com 
+        rw [← List.append_assoc] 
+        apply Proof.scom
+        change X ++ ([γ] ++ Γt) ++ ([y] ++ Yt) ++ [] ++ Z ⊢ A at p
+        rw [List.append_nil, ← List.append_assoc X, ← List.append_assoc _ [y]] at p
+        assumption
+    | List.cons δ Δt => by 
+      change X ++ ([δ] ++ Δt) ++ Y ++ ([γ] ++ Γt) ++ Z ⊢ A 
+      rw [← List.append_assoc X, List.append_assoc _ Δt, ← List.append_assoc, List.append_assoc]
+      apply Proof.com
+      rw [← List.append_assoc _ Δt, List.append_assoc _ Y, ← List.append_assoc]
+      apply Proof.scom
+      change  X ++ ([γ] ++ Γt) ++ Y ++ ([δ] ++ Δt) ++ Z ⊢ A at p
+      rw [← List.append_assoc X, ← List.append_assoc _ [δ], List.append_assoc _ Y] at p
+      assumption
+termination_by Proof.scom X Y Z Γ Δ _ _ => (List.length Γ + List.length Δ + List.length Y) 
 
-def Proof.scontr {Γ Δ : List PropForm} {A : PropForm} (p : (Δ ++ Δ ++ Γ) ⊢ A) : Δ ++ Γ ⊢ A := by
-  sorry
+def Proof.swek {Γ : List PropForm} {A : PropForm} (Δ : List PropForm ) (p : Γ ⊢ A) : Δ ++ Γ ⊢ A :=
+  match Δ with
+  | List.nil => p 
+  | List.cons δ Δt => Proof.wek δ (Proof.swek Δt p) 
 
-def Proof_CF.scom (X Y Z Γ Δ : List PropForm) {A : PropForm} (p : (X ++ Γ ++ Y ++ Δ ++ Z) ⊢₁ A) : (X ++ Δ ++ Y ++ Γ ++ Z) ⊢₁ A := by
-  sorry
---   cases Γ
---   . cases Δ 
---     . assumption 
---     . rename_i P Δ 
---       cases Y
---       . simpa [List.append_nil, List.nil_append] using p
---       . rename_i Q Y 
---         change X ++ ([P] ++ Δ) ++ ([Q] ++ Y) ++ [] ++ Z ⊢₁ A
---         rw [List.append_nil, ← List.append_assoc X, ← List.append_assoc, List.append_assoc]
---         apply Proof_CF.com 
---         rw [← List.append_assoc] 
---         apply struct_com_CF
---         change X ++ [] ++ ([Q] ++ Y) ++ ([P] ++ Δ) ++ Z ⊢₁ A at p
---         rw [List.append_nil, ← List.append_assoc X, ← List.append_assoc _ [P]] at p
---         assumption
---   . rename_i P Γ 
---     cases Δ 
---     . cases Y 
---       . simpa [List.append_nil, List.nil_append] using p
---       . rename_i Q Y 
---         change X ++ [] ++ ([Q] ++ Y) ++ ([P] ++ Γ) ++ Z ⊢₁ A
---         rw [List.append_nil, ← List.append_assoc X, ← List.append_assoc, List.append_assoc]
---         apply Proof_CF.com 
---         rw [← List.append_assoc] 
---         apply struct_com_CF
---         change X ++ ([P] ++ Γ) ++ ([Q] ++ Y) ++ [] ++ Z ⊢₁ A at p
---         rw [List.append_nil, ← List.append_assoc X, ← List.append_assoc _ [Q]] at p
---         assumption
---     . rename_i Q Δ 
---       change X ++ ([Q] ++ Δ) ++ Y ++ ([P] ++ Γ) ++ Z ⊢₁ A 
---       rw [← List.append_assoc X, List.append_assoc _ Δ, ← List.append_assoc, List.append_assoc]
---       apply Proof_CF.com
---       rw [← List.append_assoc _ Δ, List.append_assoc _ Y, ← List.append_assoc]
---       apply struct_com_CF
---       change  X ++ ([P] ++ Γ) ++ Y ++ ([Q] ++ Δ) ++ Z ⊢₁ A at p
---       rw [← List.append_assoc X, ← List.append_assoc _ [Q], List.append_assoc _ Y] at p
---       assumption
--- termination_by struct_com_CF X Y Z Γ Δ A p => (List.length Γ + List.length Δ) 
+def Proof.scontr {Γ Δ : List PropForm} {A : PropForm} (p : (Δ ++ Δ ++ Γ) ⊢ A) : Δ ++ Γ ⊢ A :=
+  match Δ with
+  | List.nil => p
+  | List.cons δ Δt => by
+    apply Proof.contr
+    change [] ++ [δ] ++ [δ] ++ Δt ++ Γ ⊢ A
+    apply Proof.scom
+    have this : [] ++ Δt ++ [δ] ++ [δ] ++ Γ =  Δt ++ ([δ] ++ [δ] ++ Γ) := by
+      simp [List.append_assoc, List.nil_append] 
+    rw [this]
+    apply Proof.scontr
+    rw [← List.append_assoc, ← List.append_assoc, List.append_assoc Δt]
+    change [] ++ Δt ++ (Δt ++ [δ]) ++ [δ] ++ Γ ⊢ A
+    apply Proof.scom 
+    rw [List.nil_append, ← List.append_assoc, List.append_assoc _ [δ]]
+    assumption
 
-def Proof_CF.swek {Γ : List PropForm} {A : PropForm} (Δ : List PropForm) (p : Γ ⊢₁ A) : Δ ++ Γ ⊢₁ A := by
-  sorry
+def Proof_CF.scom (X Y Z Γ Δ : List PropForm) {A : PropForm} (p : (X ++ Γ ++ Y ++ Δ ++ Z) ⊢₁ A) : (X ++ Δ ++ Y ++ Γ ++ Z) ⊢₁ A := 
+  match Γ with 
+  | List.nil => match Δ with 
+    | List.nil => p  
+    | List.cons δ Δt => match Y with 
+      | List.nil => by simpa [List.append_nil, List.nil_append] using p
+      | List.cons y Yt => by 
+        change X ++ ([δ] ++ Δt) ++ ([y] ++ Yt) ++ [] ++ Z ⊢₁ A
+        rw [List.append_nil, ← List.append_assoc X, ← List.append_assoc, List.append_assoc]
+        apply Proof_CF.com 
+        rw [← List.append_assoc] 
+        apply Proof_CF.scom
+        change X ++ [] ++ ([y] ++ Yt) ++ ([δ] ++ Δt) ++ Z ⊢₁ A at p
+        rw [List.append_nil, ← List.append_assoc X, ← List.append_assoc _ [δ]] at p
+        assumption
+  | List.cons γ Γt => match Δ with
+    | List.nil => match Y with
+      | List.nil => by simpa [List.append_nil, List.nil_append] using p
+      | List.cons y Yt => by
+        change X ++ [] ++ ([y] ++ Yt) ++ ([γ] ++ Γt) ++ Z ⊢₁ A
+        rw [List.append_nil, ← List.append_assoc X, ← List.append_assoc, List.append_assoc]
+        apply Proof_CF.com 
+        rw [← List.append_assoc] 
+        apply Proof_CF.scom
+        change X ++ ([γ] ++ Γt) ++ ([y] ++ Yt) ++ [] ++ Z ⊢₁ A at p
+        rw [List.append_nil, ← List.append_assoc X, ← List.append_assoc _ [y]] at p
+        assumption
+    | List.cons δ Δt => by 
+      change X ++ ([δ] ++ Δt) ++ Y ++ ([γ] ++ Γt) ++ Z ⊢₁ A 
+      rw [← List.append_assoc X, List.append_assoc _ Δt, ← List.append_assoc, List.append_assoc]
+      apply Proof_CF.com
+      rw [← List.append_assoc _ Δt, List.append_assoc _ Y, ← List.append_assoc]
+      apply Proof_CF.scom
+      change  X ++ ([γ] ++ Γt) ++ Y ++ ([δ] ++ Δt) ++ Z ⊢₁ A at p
+      rw [← List.append_assoc X, ← List.append_assoc _ [δ], List.append_assoc _ Y] at p
+      assumption
+termination_by Proof_CF.scom X Y Z Γ Δ _ _ => (List.length Γ + List.length Δ + List.length Y) 
 
-def Proof_CF.scontr {Γ : List PropForm} {A : PropForm} (p : (Δ ++ Δ ++ Γ) ⊢₁ A) : Δ ++ Γ ⊢₁ A := by
-  sorry
+def Proof_CF.swek {Γ : List PropForm} {A : PropForm} (Δ : List PropForm) (p : Γ ⊢₁ A) : Δ ++ Γ ⊢₁ A := 
+  match Δ with
+  | List.nil => p 
+  | List.cons δ Δt => Proof_CF.wek δ (Proof_CF.swek Δt p) 
+
+def Proof_CF.scontr {Γ Δ : List PropForm} {A : PropForm} (p : (Δ ++ Δ ++ Γ) ⊢₁ A) : Δ ++ Γ ⊢₁ A := 
+  match Δ with
+  | List.nil => p
+  | List.cons δ Δt => by
+    apply Proof_CF.contr
+    change [] ++ [δ] ++ [δ] ++ Δt ++ Γ ⊢₁ A
+    apply Proof_CF.scom
+    have this : [] ++ Δt ++ [δ] ++ [δ] ++ Γ =  Δt ++ ([δ] ++ [δ] ++ Γ) := by
+      simp [List.append_assoc, List.nil_append] 
+    rw [this]
+    apply Proof_CF.scontr
+    rw [← List.append_assoc, ← List.append_assoc, List.append_assoc Δt]
+    change [] ++ Δt ++ (Δt ++ [δ]) ++ [δ] ++ Γ ⊢₁ A
+    apply Proof_CF.scom 
+    rw [List.nil_append, ← List.append_assoc, List.append_assoc _ [δ]]
+    assumption
+
+--canonical embedding from Proof_CF to Proof
+
+lemma CF_C {Γ : List PropForm} {A : PropForm} : (Γ ⊢₁ A) → (Γ ⊢ A)
+  | Proof_CF.id _ => Proof.id _
+  | Proof_CF.exfal _ => Proof.exfal _
+  | Proof_CF.com _ _ _ p => Proof.com _ _ _ (CF_C p)
+  | Proof_CF.wek _ p => Proof.wek _ (CF_C p)
+  | Proof_CF.contr p => Proof.contr (CF_C p)
+  | Proof_CF.rimpl p => Proof.rimpl (CF_C p)
+  | Proof_CF.limpl p q => Proof.limpl (CF_C p) (CF_C q)
+  | Proof_CF.rconj p q => Proof.rconj (CF_C p) (CF_C q)
+  | Proof_CF.lconjr _ p => Proof.lconjr _ (CF_C p)
+  | Proof_CF.lconjl _ p => Proof.lconjl _ (CF_C p)
+  | Proof_CF.rdisjr _ p => Proof.rdisjr _ (CF_C p) 
+  | Proof_CF.rdisjl _ p => Proof.rdisjl _ (CF_C p)
+  | Proof_CF.ldisj p q => Proof.ldisj (CF_C p) (CF_C q)
+
+--various inversion lemmas 
 
 lemma rimpl_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A → B) →  A :: Γ ⊢ B
   | Proof.id _ => Proof.com [] [] [] (Proof.limpl (Proof.id A) (Proof.com [] [] [] (Proof.wek A (Proof.id B))))
@@ -205,16 +308,44 @@ lemma rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → Γ 
   | Proof.cut p q => (Proof.cut p (rconj_inv q).1, (Proof.cut p (rconj_inv q).2))        
 
 lemma lconj_inv {Γ : List PropForm} {A B C : PropForm} : ((A ∧ B) :: Γ ⊢ C) → A :: B :: Γ ⊢ C := by 
-  intro h
-  generalize g : (A ∧ B) :: Γ = Δ 
-  rw [g] at h
-  sorry
+  intro h; generalize g : (A ∧ B) :: Γ = Δ; rw [g] at h; cases h
+  . injection g with gh gt
+    rw [gt, ← gh]  
+    sorry
+  . injection g; contradiction
+  . sorry
+  . sorry
+  . sorry
+  . sorry
+  . injection g; contradiction
+  . sorry
+  . sorry
+  . sorry
+  . sorry
+  . sorry 
+  . injection g; contradiction
+  . sorry
 
 lemma ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → A :: Γ ⊢ C × B :: Γ ⊢ C := by  
-  intro h
-  generalize g : (A ∨ B) :: Γ = Δ 
-  rw [g] at h
-  sorry
+  intro h; generalize g : (A ∨ B) :: Γ = Δ; rw [g] at h; cases h
+  . injection g with gh gt
+    rw [gt, ← gh]  
+    sorry
+  . injection g; contradiction
+  . sorry
+  . sorry
+  . sorry
+  . sorry
+  . injection g; contradiction
+  . sorry
+  . injection g; contradiction
+  . injection g; contradiction
+  . sorry
+  . sorry 
+  . sorry
+  . sorry
+
+--the main theorem 
 
 theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → Γ ⊢₁ A
   | Proof.id _ => Proof_CF.id _
@@ -233,68 +364,102 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → Γ ⊢₁
   | @Proof.cut Γ₀ B Γ₁ _ p q => match B with 
     | var n => match p with 
       | Proof.id _ => hauptsatz q
-      | Proof.exfal _ => by sorry
-        -- change [] ++ [fls] ++ [] ++ Γ₁ ⊢₁ A
-        -- rw [← List.append_nil ([] ++ [fls] ++ [] ++ Γ₁)]
-        -- apply Proof_CF.scom [] [] [] Γ₁ [fls]
-        -- rw [List.nil_append, List.append_nil, List.append_nil]
-        -- apply (Proof_CF.swek Γ₁ (Proof_CF.exfal A))
-      | Proof.com _ _ _ _ => by sorry
-      | Proof.wek _ _ => by sorry
-      | Proof.contr _ => by sorry
-      | Proof.limpl _ _ => by sorry
-      | Proof.lconjr _ _ => by sorry
-      | Proof.lconjl _ _ => by sorry
-      | Proof.ldisj _ _ => by sorry
+      | Proof.exfal _ => by
+        change [] ++ [fls] ++ [] ++ Γ₁ ⊢₁ A
+        rw [← List.append_nil ([] ++ [fls] ++ [] ++ Γ₁)]
+        apply Proof_CF.scom [] [] [] Γ₁ [fls]
+        rw [List.nil_append, List.append_nil, List.append_nil]
+        exact (Proof_CF.swek Γ₁ (Proof_CF.exfal A))
+      | Proof.com _ _ _ r => by 
+        rw [List.append_assoc]
+        apply Proof_CF.com 
+        rw [← List.append_assoc]
+        exact hauptsatz (Proof.cut r q)
+      | Proof.wek _ r => Proof_CF.wek _ (hauptsatz (Proof.cut r q))
+      | Proof.contr r => Proof_CF.contr (hauptsatz (Proof.cut r q))
+      | Proof.limpl r s => by sorry
+      | Proof.lconjr _ r => Proof_CF.lconjr _ (hauptsatz (Proof.cut r q))
+      | Proof.lconjl _ r => Proof_CF.lconjl _ (hauptsatz (Proof.cut r q))
+      | Proof.ldisj r s => Proof_CF.ldisj (hauptsatz (Proof.cut r q)) (hauptsatz (Proof.cut s q))
       | Proof.cut _ _ => by sorry
     | fls => match p with 
       | Proof.id _ => hauptsatz q
-      | Proof.exfal _ => by sorry
-      | Proof.com _ _ _ _ => by sorry
-      | @Proof.wek X _ C r => by sorry
-      | @Proof.contr C X _ r => by sorry 
-      | Proof.limpl _ _ => by sorry
-      | Proof.lconjr _ _ => by sorry
-      | Proof.lconjl _ _ => by sorry
-      | Proof.ldisj _ _ => by sorry
+      | Proof.exfal _ => by
+        change [] ++ [fls] ++ [] ++ Γ₁ ⊢₁ A
+        rw [← List.append_nil ([] ++ [fls] ++ [] ++ Γ₁)]
+        apply Proof_CF.scom [] [] [] Γ₁ [fls]
+        rw [List.nil_append, List.append_nil, List.append_nil]
+        exact (Proof_CF.swek Γ₁ (Proof_CF.exfal A))
+      | Proof.com _ _ _ r => by 
+        rw [List.append_assoc]
+        apply Proof_CF.com 
+        rw [← List.append_assoc]
+        exact hauptsatz (Proof.cut r q)
+      | Proof.wek _ r => Proof_CF.wek _ (hauptsatz (Proof.cut r q))
+      | Proof.contr r => Proof_CF.contr (hauptsatz (Proof.cut r q))
+      | Proof.limpl r s => sorry
+      | Proof.lconjr _ r => Proof_CF.lconjr _ (hauptsatz (Proof.cut r q))
+      | Proof.lconjl _ r => Proof_CF.lconjl _ (hauptsatz (Proof.cut r q))
+      | Proof.ldisj r s => Proof_CF.ldisj (hauptsatz (Proof.cut r q)) (hauptsatz (Proof.cut s q))
       | Proof.cut _ _ => by sorry
     | impl P Q => by 
-      generalize g : (P → Q) :: Γ₁ = Δ 
-      rw [g] at q
-      cases q 
-      . injection g with gh 
-        rw [gh] at p 
-        sorry 
-      . injection g
-        contradiction 
+      generalize g : (P → Q) :: Γ₁ = Δ; rw [g] at q; cases q 
+      . injection g with gh gt; rw [gh] at p; rw [gt, List.append_nil]; exact hauptsatz p
+      . injection g; contradiction 
       . sorry
+      . rename_i _ _ r; injection g with _ gt
+        rw [gt]
+        exact Proof_CF.swek Γ₀ (hauptsatz r)
+      . rename_i R X r; injection g with gh gt
+      --contraction on the side case causes trouble: we need to perform Proof.scom within haustsatz in order to perform two cuts
+      --it significantly increases the proof size; we have to count com_size seperatively from proof_size
+        rw [gt]; rw [gh] at p 
+        have c := Proof.cut p r 
+        change Γ₀ ++ ([R] ++ X) ⊢ A at c
+        rw [← List.append_assoc, ← List.nil_append Γ₀, ← List.append_nil ([] ++ Γ₀)] at c 
+        have d := hauptsatz (Proof.cut p (Proof.scom [] [] X Γ₀ [R] c))
+        apply Proof_CF.scontr
+        simpa using d
+      . rename_i R S r
+        rw [← g] at r
+        sorry
       . sorry 
       . sorry
-      . sorry      
-      . sorry 
-      . sorry
-      . injection g
-        contradiction 
-      . injection g
-        contradiction 
+      . injection g; contradiction 
+      . injection g; contradiction 
       . sorry
       . sorry      
-      . injection g
-        contradiction 
+      . injection g; contradiction 
       . sorry
-    | conj P Q => by sorry
-      --have := hauptsatz (Proof.cut (rconj_inv p).2 (Proof.cut ((rconj_inv p).1) (lconj_inv q)))
+    | conj P Q => by 
+      have c := Proof.cut ((rconj_inv p).1) (lconj_inv q)
+      change [] ++ Γ₀ ++ ([Q] ++ Γ₁) ⊢ A at c
+      rw [← List.append_nil ([] ++ Γ₀), ← List.append_assoc] at c
+      apply Proof_CF.scontr
+      have h : Γ₀ ++ List.append (List.append (List.append [] []) Γ₀) Γ₁ = Γ₀ ++ Γ₀ ++ Γ₁ := by
+        simp
+      rw [← h]
+      exact (hauptsatz (Proof.cut (rconj_inv p).2 ( Proof.scom [] [] Γ₁ Γ₀ [Q] c))) 
     | disj P Q => match p with 
       | Proof.id _ => hauptsatz q
-      | Proof.exfal _ => by sorry 
-      | Proof.com _ _ _ _ => by sorry
-      | Proof.wek _ _ => by sorry
-      | Proof.contr _ => by sorry
-      | Proof.limpl _ _ => by sorry
-      | Proof.lconjr _ _ => by sorry
-      | Proof.lconjl _ _ => by sorry
+      | Proof.exfal _ => by
+        change [] ++ [fls] ++ [] ++ Γ₁ ⊢₁ A
+        rw [← List.append_nil ([] ++ [fls] ++ [] ++ Γ₁)]
+        apply Proof_CF.scom [] [] [] Γ₁ [fls]
+        rw [List.nil_append, List.append_nil, List.append_nil]
+        exact (Proof_CF.swek Γ₁ (Proof_CF.exfal A)) 
+      | Proof.com _ _ _ r => by
+        rw [List.append_assoc]
+        apply Proof_CF.com 
+        rw [← List.append_assoc]
+        exact hauptsatz (Proof.cut r q)
+      | Proof.wek _ r => Proof_CF.wek _ (hauptsatz (Proof.cut r q))
+      | Proof.contr r => Proof_CF.contr (hauptsatz (Proof.cut r q))
+      | Proof.limpl r s => sorry
+      | Proof.lconjr _ r => Proof_CF.lconjr _ (hauptsatz (Proof.cut r q))
+      | Proof.lconjl _ r => Proof_CF.lconjl _ (hauptsatz (Proof.cut r q))
       | Proof.rdisjr _ _ => by sorry
       | Proof.rdisjl _ _ => by sorry
-      | Proof.ldisj _ _ => by sorry
+      | Proof.ldisj r s => Proof_CF.ldisj (hauptsatz (Proof.cut r q)) (hauptsatz (Proof.cut s q))
       | Proof.cut _ _ => by sorry
-termination_by hauptsatz p => (cut_size p, size p)
+termination_by hauptsatz p => (cut_size p, com_size p, size p)
