@@ -63,7 +63,7 @@ inductive Proof : List PropForm → List PropForm → Type where
   | lconj : Proof (A :: B :: Γ) Δ  → Proof ((A ∧ B) :: Γ) Δ
   | rdisj : Proof Γ (A :: B :: Δ )  → Proof Γ ((A ∨ B) :: Δ) 
   | ldisj : Proof (A :: Γ) Δ  → Proof (B :: Γ) Δ → Proof ((A ∨ B) :: Γ) Δ
-  | cut : Proof Γ (A :: Δ)  →  Proof (A :: Γ) Δ  → Proof Γ Δ
+  | cut : Proof Γ₀ (A :: Δ₀)  →  Proof (A :: Γ₁) Δ₁  → Proof (Γ₀ ++ Γ₁) (Δ₀ ++ Δ₁)
 
 inductive Proof_CF : List PropForm → List PropForm → Type where
   | id (A : PropForm) : Proof_CF [A] [A]
@@ -116,7 +116,7 @@ def cut_size {Γ : List PropForm} {Δ : List PropForm} : Proof Γ Δ  → ℕ
   | Proof.lconj p => cut_size p
   | Proof.rdisj p => cut_size p
   | Proof.ldisj p q => cut_size p + cut_size q
-  | @Proof.cut _ A _ p q => cut_size p + cut_size q + complexity A
+  | @Proof.cut _ A _ _ _ p q => cut_size p + cut_size q + complexity A
 
 lemma rneg_inv {Γ Δ : List PropForm} {A : PropForm} : (Γ ⊢ (¬ A) :: Δ) → A :: Γ ⊢ Δ := by 
   sorry 
@@ -150,7 +150,7 @@ theorem hauptsatz {Γ Δ : List PropForm} : (Γ ⊢ Δ) → Γ ⊢₁ Δ
   | Proof.lconj p => Proof_CF.lconj (hauptsatz p)  
   | Proof.rdisj p => Proof_CF.rdisj (hauptsatz p)
   | Proof.ldisj p q => Proof_CF.ldisj (hauptsatz p) (hauptsatz q)
-  | @Proof.cut _ B _ p q => 
+  | @Proof.cut _ B _ _ _ p q => 
     match B with 
     | var n => by sorry
     | neg P => by sorry

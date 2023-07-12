@@ -400,10 +400,9 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → Γ ⊢₁
       --contraction on the side case causes trouble: we need to perform Proof.scom within haustsatz in order to perform two cuts
       --it significantly increases the proof size; we have to count com_size seperatively from proof_size
         rw [gt]; rw [gh] at p 
+        apply Proof_CF.scontr 
         have c := Proof.cut p r 
-        change Γ₀ ++ ([R] ++ X) ⊢ A at c
-        rw [← append_assoc, ← nil_append Γ₀, ← append_nil ([] ++ Γ₀)] at c 
-        apply Proof_CF.scontr
+        rw [append_cons, ← append_nil Γ₀, ← nil_append Γ₀] at c
         simpa using hauptsatz (Proof.cut p (Proof.scom [] [] X Γ₀ [R] c))
       . rename_i R S r
         rw [← g] at r
@@ -417,14 +416,10 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → Γ ⊢₁
       . injection g; contradiction 
       . sorry
     | conj P Q => by 
-      have c := Proof.cut ((rconj_inv p).1) (lconj_inv q)
-      change [] ++ Γ₀ ++ ([Q] ++ Γ₁) ⊢ A at c
-      rw [← append_nil ([] ++ Γ₀), ← append_assoc] at c
       apply Proof_CF.scontr
-      have h : Γ₀ ++ List.append (List.append (List.append [] []) Γ₀) Γ₁ = Γ₀ ++ Γ₀ ++ Γ₁ := by
-        simp
-      rw [← h]
-      exact (hauptsatz (Proof.cut (rconj_inv p).2 ( Proof.scom [] [] Γ₁ Γ₀ [Q] c))) 
+      have c := Proof.cut ((rconj_inv p).1) (lconj_inv q)
+      rw [append_cons, ← append_nil Γ₀, ← nil_append Γ₀] at c
+      simpa using (hauptsatz (Proof.cut (rconj_inv p).2 ( Proof.scom [] [] Γ₁ Γ₀ [Q] c))) 
     | disj P Q => match p with 
       | Proof.id _ => hauptsatz q
       | Proof.exfal _ => by
