@@ -1,4 +1,5 @@
 import Mathlib.Data.Real.Basic
+import Mathlib.Data.Prod.Lex
 
 --secret message hehehe
 
@@ -15,6 +16,7 @@ inductive PropForm : Type where
   | impl : PropForm → PropForm → PropForm
   | conj : PropForm → PropForm → PropForm
   | disj : PropForm → PropForm → PropForm
+  deriving Repr, DecidableEq
 
 open PropForm
 
@@ -131,7 +133,7 @@ def cut_deg {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ
   | Proof.contr p => cut_deg p
   | Proof.rimpl p => cut_deg p
   | Proof.limpl p q => cut_deg p + cut_deg q
-  | Proof.rconj p q => cut_deg p + cut_deg q
+  | Proof.rconj p q => cut_deg p + cut_deg q 
   | Proof.lconjl _ p => cut_deg p
   | Proof.lconjr _ p => cut_deg p
   | Proof.rdisjl _ p => cut_deg p 
@@ -146,14 +148,20 @@ def cut_size {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ
   | Proof.wek _ p => cut_size p
   | Proof.contr p => cut_size p
   | Proof.rimpl p => cut_size p
-  | Proof.limpl p q => cut_size p + cut_size q
-  | Proof.rconj p q => cut_size p + cut_size q
+  | Proof.limpl p q => cut_size p + cut_size q + 1
+  | Proof.rconj p q => cut_size p + cut_size q + 1
   | Proof.lconjl _ p => cut_size p
   | Proof.lconjr _ p => cut_size p
   | Proof.rdisjl _ p => cut_size p 
   | Proof.rdisjr _ p => cut_size p
   | Proof.ldisj p q => cut_size p + cut_size q
   | Proof.cut p q => cut_size p + cut_size q + size p + size q
+
+--use lexicographic ordering on tuples of natural numbers
+
+local instance : LT (ℕ × ℕ) where lt := Prod.Lex (· < ·) (· < ·)
+local instance : LT (ℕ × ℕ × ℕ) where lt := Prod.Lex (· < ·) (· < ·)
+local instance : LT (ℕ × ℕ × ℕ × ℕ) where lt := Prod.Lex (· < ·) (· < ·)
 
 --admit strcutural com, wek, and contr for both Proof and Proof_CF
 
@@ -168,7 +176,7 @@ def Proof.scom (X Y Z Γ Δ : List PropForm) {A : PropForm} (p : (X ++ Γ ++ Y +
         apply Proof.com 
         rw [← append_assoc] 
         apply Proof.scom
-        simpa using p
+        simpa only [append_assoc] using p
   | List.cons γ Γt => match Δ with
     | List.nil => match Y with
       | List.nil => by simpa [append_nil, nil_append] using p
@@ -177,13 +185,13 @@ def Proof.scom (X Y Z Γ Δ : List PropForm) {A : PropForm} (p : (X ++ Γ ++ Y +
         apply Proof.com 
         rw [← append_assoc] 
         apply Proof.scom
-        simpa using p
+        simpa only [append_assoc] using p
     | List.cons δ Δt => by 
       rw [append_cons, append_cons _ δ, append_assoc (X ++ [δ]), append_assoc]
       apply Proof.com
       rw [← append_assoc _ Δt, append_assoc _ Y, ← append_assoc]
       apply Proof.scom
-      simpa using p
+      simpa only [append_assoc] using p
 termination_by Proof.scom X Y Z Γ Δ _ _ => (List.length Γ + List.length Δ + List.length Y) 
 
 def Proof.swek {Γ : List PropForm} {A : PropForm} (Δ : List PropForm ) (p : Γ ⊢ A) : Δ ++ Γ ⊢ A :=
@@ -200,35 +208,35 @@ def Proof.scontr {Γ Δ : List PropForm} {A : PropForm} (p : (Δ ++ Δ ++ Γ) �
     apply Proof.scontr
     rw [← append_assoc, ← append_assoc, append_assoc Δt]
     apply Proof.scom [] (Δt ++ [δ]) Γ [δ] Δt
-    simpa using p
+    simpa only [append_assoc] using p
 
 def Proof_CF.scom (X Y Z Γ Δ : List PropForm) {A : PropForm} (p : (X ++ Γ ++ Y ++ Δ ++ Z) ⊢₁ A) : (X ++ Δ ++ Y ++ Γ ++ Z) ⊢₁ A := 
   match Γ with 
   | List.nil => match Δ with 
     | List.nil => p  
     | List.cons δ Δt => match Y with 
-      | List.nil => by simpa [append_nil, nil_append] using p
+      | List.nil => by simpa only [append_nil, nil_append] using p
       | List.cons y Yt => by
         rw [append_nil, append_cons, append_cons _ δ, append_assoc]
         apply Proof_CF.com 
         rw [← append_assoc] 
         apply Proof_CF.scom
-        simpa using p
+        simpa only [append_assoc] using p
   | List.cons γ Γt => match Δ with
     | List.nil => match Y with
-      | List.nil => by simpa [append_nil, nil_append] using p
+      | List.nil => by simpa only [append_nil, nil_append] using p
       | List.cons y Yt => by
         rw [append_cons, append_cons _ y, append_nil, append_assoc]
         apply Proof_CF.com 
         rw [← append_assoc] 
         apply Proof_CF.scom
-        simpa using p
+        simpa only [append_assoc] using p
     | List.cons δ Δt => by 
       rw [append_cons, append_cons _ δ, append_assoc (X ++ [δ]), append_assoc]
       apply Proof_CF.com
       rw [← append_assoc _ Δt, append_assoc _ Y, ← append_assoc]
       apply Proof_CF.scom
-      simpa using p
+      simpa only [append_assoc] using p
 termination_by Proof_CF.scom X Y Z Γ Δ _ _ => (List.length Γ + List.length Δ + List.length Y) 
 
 def Proof_CF.swek {Γ : List PropForm} {A : PropForm} (Δ : List PropForm) (p : Γ ⊢₁ A) : Δ ++ Γ ⊢₁ A := 
@@ -245,7 +253,7 @@ def Proof_CF.scontr {Γ Δ : List PropForm} {A : PropForm} (p : (Δ ++ Δ ++ Γ)
     apply Proof_CF.scontr
     rw [← append_assoc, ← append_assoc, append_assoc Δt]
     apply Proof_CF.scom [] (Δt ++ [δ]) Γ [δ] Δt
-    simpa using p
+    simpa only [append_assoc] using p
 
 --canonical embedding from Proof_CF to Proof
 
@@ -279,7 +287,7 @@ lemma rimpl_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A → B) →  A 
   | @Proof.ldisj P X _ Q p q => Proof.com [] [] X (Proof.ldisj (Proof.com [] [] X (rimpl_inv p)) (Proof.com [] [] X (rimpl_inv q)))
   | @Proof.cut X P Y _ p q => by 
     apply Proof.scom [] [] Y X [A]
-    simpa using (Proof.cut p (Proof.com [] [] Y (rimpl_inv q)))
+    simpa only [append_assoc] using (Proof.cut p (Proof.com [] [] Y (rimpl_inv q)))
 
 lemma rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → Γ ⊢ A × Γ ⊢ B
   | Proof.id _ => (Proof.lconjl B (Proof.id A), Proof.lconjr A (Proof.id B))
@@ -340,13 +348,34 @@ lemma ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C)
 theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → Γ ⊢₁ A
   | Proof.id _ => Proof_CF.id _
   | Proof.exfal _ => Proof_CF.exfal _
-  | Proof.com _ _ _ p => Proof_CF.com _ _ _ (hauptsatz p) 
-  | Proof.wek B p => Proof_CF.wek B (hauptsatz p)
-  | Proof.contr p => Proof_CF.contr (hauptsatz p)  
-  | Proof.rimpl p => Proof_CF.rimpl (hauptsatz p) 
-  | Proof.limpl p q => Proof_CF.limpl (hauptsatz p) (hauptsatz q) 
+  | Proof.com X Y Z p => 
+    have : com_size p < com_size (Proof.com X Y Z p) := by simp only [com_size, lt_add_iff_pos_right]
+    Proof_CF.com _ _ _ (hauptsatz p) 
+  | Proof.wek B p => 
+    have : size p < size (Proof.wek B p) := by simp only [size, lt_add_iff_pos_right]
+    Proof_CF.wek B (hauptsatz p)
+  | Proof.contr p => 
+    have :  size p < size (Proof.contr p) := by simp only [size, lt_add_iff_pos_right]
+    Proof_CF.contr (hauptsatz p)  
+  | Proof.rimpl p => 
+    have : size p < size (Proof.rimpl p) := by simp only [size, lt_add_iff_pos_right]
+    Proof_CF.rimpl (hauptsatz p) 
+  | Proof.limpl p q => 
+    have : (cut_deg p, size p, cut_size p, com_size p) < (cut_deg (Proof.limpl p q), size (Proof.limpl p q), cut_size (Proof.limpl p q), com_size (Proof.limpl p q)) := by
+      by_cases P : (cut_deg q = 0) 
+      . rw [cut_deg, size, P, add_zero]
+        right; left; linarith
+      . left;
+        simpa [cut_deg, pos_iff_ne_zero, lt_add_of_pos_left]using P
+    have : (cut_deg q, size q, cut_size q, com_size q) < (cut_deg (Proof.limpl p q), size (Proof.limpl p q), cut_size (Proof.limpl p q), com_size (Proof.limpl p q)) := by
+      by_cases P : (cut_deg p = 0) 
+      . rw [cut_deg, size, P, zero_add]
+        right; left; linarith
+      . left;
+        simpa [cut_deg, pos_iff_ne_zero, lt_add_of_pos_left]using P 
+    Proof_CF.limpl (hauptsatz p) (hauptsatz q)
   | Proof.rconj p q => Proof_CF.rconj (hauptsatz p) (hauptsatz q)
-  | Proof.lconjr A p => Proof_CF.lconjr A (hauptsatz p)  
+  | Proof.lconjr A p => Proof_CF.lconjr A (hauptsatz p) 
   | Proof.lconjl B p => Proof_CF.lconjl B (hauptsatz p)
   | Proof.rdisjr A p => Proof_CF.rdisjr A (hauptsatz p)
   | Proof.rdisjl B p => Proof_CF.rdisjl B (hauptsatz p)
@@ -440,4 +469,5 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → Γ ⊢₁
       | Proof.rdisjl _ _ => by sorry
       | Proof.ldisj r s => Proof_CF.ldisj (hauptsatz (Proof.cut r q)) (hauptsatz (Proof.cut s q))
       | Proof.cut _ _ => by sorry
-termination_by hauptsatz p => (cut_deg p, cut_size p, size p, com_size p)
+termination_by hauptsatz p => (cut_deg p, size p, cut_size p, com_size p)
+decreasing_by sorry
