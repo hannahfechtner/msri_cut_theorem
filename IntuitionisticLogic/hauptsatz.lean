@@ -148,8 +148,8 @@ def cut_size {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ
   | Proof.wek _ p => cut_size p
   | Proof.contr p => cut_size p
   | Proof.rimpl p => cut_size p
-  | Proof.limpl p q => cut_size p + cut_size q + 1
-  | Proof.rconj p q => cut_size p + cut_size q + 1
+  | Proof.limpl p q => cut_size p + cut_size q
+  | Proof.rconj p q => cut_size p + cut_size q 
   | Proof.lconjl _ p => cut_size p
   | Proof.lconjr _ p => cut_size p
   | Proof.rdisjl _ p => cut_size p 
@@ -361,18 +361,22 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → Γ ⊢₁
     have : size p < size (Proof.rimpl p) := by simp only [size, lt_add_iff_pos_right]
     Proof_CF.rimpl (hauptsatz p) 
   | Proof.limpl p q => 
-    have : (cut_deg p, size p, cut_size p, com_size p) < (cut_deg (Proof.limpl p q), size (Proof.limpl p q), cut_size (Proof.limpl p q), com_size (Proof.limpl p q)) := by
-      by_cases P : (cut_deg q = 0) 
-      . rw [cut_deg, size, P, add_zero]
-        right; left; linarith
-      . left;
-        simpa [cut_deg, pos_iff_ne_zero, lt_add_of_pos_left]using P
-    have : (cut_deg q, size q, cut_size q, com_size q) < (cut_deg (Proof.limpl p q), size (Proof.limpl p q), cut_size (Proof.limpl p q), com_size (Proof.limpl p q)) := by
-      by_cases P : (cut_deg p = 0) 
-      . rw [cut_deg, size, P, zero_add]
-        right; left; linarith
-      . left;
-        simpa [cut_deg, pos_iff_ne_zero, lt_add_of_pos_left]using P 
+    have : (cut_deg p, cut_size p, size p, com_size p) < (cut_deg (Proof.limpl p q), cut_size (Proof.limpl p q), size (Proof.limpl p q), com_size (Proof.limpl p q)) := by
+      by_cases qcfd : (cut_deg q = 0) 
+      . rw [cut_deg, cut_size, size, qcfd, add_zero]
+        right; by_cases qcfs : (cut_size q = 0) 
+        . rw [qcfs, add_zero]; right; left; linarith 
+        . left; simpa [pos_iff_ne_zero, lt_add_of_pos_left] using qcfs
+        --this case is actually impossible. 
+      . left; simpa [cut_deg, pos_iff_ne_zero, lt_add_of_pos_left] using qcfd
+    have : (cut_deg q, cut_size q, size q, com_size q) < (cut_deg (Proof.limpl p q), cut_size (Proof.limpl p q), size (Proof.limpl p q), com_size (Proof.limpl p q)) := by
+      by_cases pcfd : (cut_deg p = 0) 
+      . rw [cut_deg, cut_size, size, pcfd, zero_add]
+        right; by_cases pcfs : (cut_size p = 0) 
+        . rw [pcfs, zero_add]; right; left; linarith 
+        . left; simpa [pos_iff_ne_zero, lt_add_of_pos_left] using pcfs
+        --this case is actually impossible. 
+      . left; simpa [cut_deg, pos_iff_ne_zero, lt_add_of_pos_left] using pcfd
     Proof_CF.limpl (hauptsatz p) (hauptsatz q)
   | Proof.rconj p q => Proof_CF.rconj (hauptsatz p) (hauptsatz q)
   | Proof.lconjr A p => Proof_CF.lconjr A (hauptsatz p) 
@@ -469,5 +473,5 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → Γ ⊢₁
       | Proof.rdisjl _ _ => by sorry
       | Proof.ldisj r s => Proof_CF.ldisj (hauptsatz (Proof.cut r q)) (hauptsatz (Proof.cut s q))
       | Proof.cut _ _ => by sorry
-termination_by hauptsatz p => (cut_deg p, size p, cut_size p, com_size p)
-decreasing_by sorry
+termination_by hauptsatz p => (cut_deg p, cut_size p, size p, com_size p)
+--decreasing_by sorry
