@@ -132,14 +132,14 @@ def cut_deg {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ
   | Proof.wek _ p => cut_deg p
   | Proof.contr p => cut_deg p
   | Proof.rimpl p => cut_deg p
-  | Proof.limpl p q => cut_deg p + cut_deg q
-  | Proof.rconj p q => cut_deg p + cut_deg q 
+  | Proof.limpl p q => cut_deg p + cut_deg q + 1
+  | Proof.rconj p q => cut_deg p + cut_deg q + 1
   | Proof.lconjl _ p => cut_deg p
   | Proof.lconjr _ p => cut_deg p
   | Proof.rdisjl _ p => cut_deg p 
   | Proof.rdisjr _ p => cut_deg p
-  | Proof.ldisj p q => cut_deg p + cut_deg q
-  | @Proof.cut _ A _ _ p q => cut_deg p + cut_deg q + complexity A
+  | Proof.ldisj p q => cut_deg p + cut_deg q + 1
+  | @Proof.cut _ A _ _ p q => cut_deg p + cut_deg q + complexity A + 1
 
 def cut_size {Γ : List PropForm} {A : PropForm} : Proof Γ A → ℕ 
   | Proof.id _ => 0
@@ -358,44 +358,46 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → Γ ⊢₁
   | Proof.id _ => Proof_CF.id _
   | Proof.exfal _ => Proof_CF.exfal _
   | Proof.com X Y Z p => 
-    have : com_size p < com_size (Proof.com X Y Z p) := by simp only [com_size, lt_add_iff_pos_right]
+    have : com_size p < com_size (Proof.com X Y Z p) := by rw [size]; linarith
     Proof_CF.com _ _ _ (hauptsatz p) 
   | Proof.wek B p => 
-    have : size p < size (Proof.wek B p) := by simp only [size, lt_add_iff_pos_right]
+    have : size p < size (Proof.wek B p) := by rw [size]; linarith
     Proof_CF.wek B (hauptsatz p)
   | Proof.contr p => 
-    have :  size p < size (Proof.contr p) := by simp only [size, lt_add_iff_pos_right]
+    have :  size p < size (Proof.contr p) := by rw [size]; linarith
     Proof_CF.contr (hauptsatz p)  
   | Proof.rimpl p => 
-    have : size p < size (Proof.rimpl p) := by simp only [size, lt_add_iff_pos_right]
+    have : size p < size (Proof.rimpl p) := by rw [size]; linarith
     Proof_CF.rimpl (hauptsatz p) 
   | Proof.limpl p q => 
-    have : (cut_deg p, cut_size p, size p, com_size p) < (cut_deg (Proof.limpl p q), cut_size (Proof.limpl p q), size (Proof.limpl p q), com_size (Proof.limpl p q)) := by
-      by_cases qcfd : (cut_deg q = 0) 
-      . rw [cut_deg, cut_size, size, qcfd, add_zero]
-        right; by_cases qcfs : (cut_size q = 0) 
-        . rw [qcfs, add_zero]; right; left; linarith 
-        . left; simpa [pos_iff_ne_zero, lt_add_of_pos_left] using qcfs
-        --this case is actually impossible. 
-      . left; simpa [cut_deg, pos_iff_ne_zero, lt_add_of_pos_left] using qcfd
-    have : (cut_deg q, cut_size q, size q, com_size q) < (cut_deg (Proof.limpl p q), cut_size (Proof.limpl p q), size (Proof.limpl p q), com_size (Proof.limpl p q)) := by
-      by_cases pcfd : (cut_deg p = 0) 
-      . rw [cut_deg, cut_size, size, pcfd, zero_add]
-        right; by_cases pcfs : (cut_size p = 0) 
-        . rw [pcfs, zero_add]; right; left; linarith 
-        . left; simpa [pos_iff_ne_zero, lt_add_of_pos_left] using pcfs
-        --this case is actually impossible. 
-      . left; simpa [cut_deg, pos_iff_ne_zero, lt_add_of_pos_left] using pcfd
+    have : cut_deg p < cut_deg (Proof.limpl p q) := by rw [cut_deg]; linarith
+    have : cut_deg q < cut_deg (Proof.limpl p q) := by rw [cut_deg]; linarith
     Proof_CF.limpl (hauptsatz p) (hauptsatz q)
-  | Proof.rconj p q => Proof_CF.rconj (hauptsatz p) (hauptsatz q)
-  | Proof.lconjr A p => Proof_CF.lconjr A (hauptsatz p) 
-  | Proof.lconjl B p => Proof_CF.lconjl B (hauptsatz p)
-  | Proof.rdisjr A p => Proof_CF.rdisjr A (hauptsatz p)
-  | Proof.rdisjl B p => Proof_CF.rdisjl B (hauptsatz p)
-  | Proof.ldisj p q => Proof_CF.ldisj (hauptsatz p) (hauptsatz q)
+  | Proof.rconj p q => 
+    have : cut_deg p < cut_deg (Proof.rconj p q) := by rw [cut_deg]; linarith
+    have : cut_deg q < cut_deg (Proof.rconj p q) := by rw [cut_deg]; linarith
+    Proof_CF.rconj (hauptsatz p) (hauptsatz q)
+  | Proof.lconjr A p => 
+    have : size p < size (Proof.lconjr A p) := by rw [size]; linarith
+    Proof_CF.lconjr A (hauptsatz p) 
+  | Proof.lconjl B p => 
+    have : size p < size (Proof.lconjl B p) := by rw [size]; linarith
+    Proof_CF.lconjl B (hauptsatz p)
+  | Proof.rdisjr A p => 
+    have : size p < size (Proof.rdisjr A p) := by rw [size]; linarith
+    Proof_CF.rdisjr A (hauptsatz p)
+  | Proof.rdisjl B p => 
+    have : size p < size (Proof.rdisjr B p) := by rw [size]; linarith
+    Proof_CF.rdisjl B (hauptsatz p)
+  | Proof.ldisj p q => 
+    have : cut_deg p < cut_deg (Proof.ldisj p q) := by rw [cut_deg]; linarith
+    have : cut_deg q < cut_deg (Proof.ldisj p q) := by rw [cut_deg]; linarith
+    Proof_CF.ldisj (hauptsatz p) (hauptsatz q)
   | @Proof.cut Γ₀ B Γ₁ _ p q => match B with 
     | var n => match p with 
-      | Proof.id _ => hauptsatz q
+      | Proof.id _ => 
+        have : cut_deg q < cut_deg (Proof.cut (Proof.id ( & n)) q) := by rw [cut_deg]; linarith
+        hauptsatz q
       | Proof.exfal _ => by
         rw [← append_nil ([fls] ++ Γ₁), ← append_nil ([fls] ++ Γ₁), ← nil_append [fls]]
         apply Proof_CF.scom [] Γ₁ []
@@ -404,9 +406,14 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → Γ ⊢₁
         rw [append_assoc]
         apply Proof_CF.com 
         rw [← append_assoc]
+        have : com_size (Proof.cut r q) < com_size (Proof.cut (Proof.com _ _ _ r) q) := by rw [com_size, com_size, com_size]; linarith
         exact hauptsatz (Proof.cut r q)
-      | Proof.wek _ r => Proof_CF.wek _ (hauptsatz (Proof.cut r q))
-      | Proof.contr r => Proof_CF.contr (hauptsatz (Proof.cut r q))
+      | Proof.wek P r => 
+        have : cut_size (Proof.cut r q) < cut_size (Proof.cut (Proof.wek P r) q) := by rw [cut_size, cut_size, cut_size, size]; linarith
+        Proof_CF.wek _ (hauptsatz (Proof.cut r q))
+      | Proof.contr r => 
+        have : cut_size (Proof.cut r q) < cut_size (Proof.cut (Proof.contr r) q) := by rw [cut_size, cut_size, cut_size, size]; linarith
+        Proof_CF.contr (hauptsatz (Proof.cut r q))
       | Proof.limpl r s => by sorry
       | Proof.lconjr _ r => Proof_CF.lconjr _ (hauptsatz (Proof.cut r q))
       | Proof.lconjl _ r => Proof_CF.lconjl _ (hauptsatz (Proof.cut r q))
@@ -483,4 +490,4 @@ theorem hauptsatz {Γ : List PropForm} {A : PropForm} : (Γ ⊢ A) → Γ ⊢₁
       | Proof.ldisj r s => Proof_CF.ldisj (hauptsatz (Proof.cut r q)) (hauptsatz (Proof.cut s q))
       | Proof.cut _ _ => by sorry
 termination_by hauptsatz p => (cut_deg p, cut_size p, size p, com_size p)
---decreasing_by sorry
+--decreasing_by simp_wf; simp [cut_deg, cut_size, size, com_size]; first
