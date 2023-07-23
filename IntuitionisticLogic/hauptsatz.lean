@@ -304,43 +304,52 @@ lemma rconj_inv {Γ : List PropForm} {A B : PropForm} : (Γ ⊢ A ∧ B) → Γ 
 
 lemma lconj_inv {Γ : List PropForm} {A B C : PropForm} : ((A ∧ B) :: Γ ⊢ C) → A :: B :: Γ ⊢ C := by 
   intro h; generalize g : (A ∧ B) :: Γ = Δ; rw [g] at h; cases h
-  . injection g with gh gt
-    rw [gt, ← gh]  
+  . injection g with gh gt; rw [gt, ← gh]  
     exact Proof.rconj (Proof.com [] [] [] (Proof.wek B (Proof.id A))) (Proof.wek A (Proof.id B))
   . injection g; contradiction
   . sorry
-  . rename_i X P p
-    injection g with _ gt
-    rw [gt]
+  . rename_i _ _ p; injection g with _ gt; rw [gt]
     exact Proof.wek A (Proof.wek B p) 
-  . sorry
-  . sorry
+  . rename_i P X p; injection g with gh gt;
+    sorry
+  . rename_i _ _ p; rw [← g] at p
+    exact Proof.com [] [] _ (Proof.rimpl (Proof.com [] [B] _ (lconj_inv (Proof.com [] [] _ p))))
   . injection g; contradiction
-  . sorry
-  . sorry
-  . sorry
-  . sorry
-  . sorry 
+  . rename_i _ _ p q; rw [← g] at p; rw [← g] at q
+    exact Proof.rconj (lconj_inv p) (lconj_inv q)
+  . rename_i _ _ P p; injection g with gh gt; injection gh with gh1 gh2; rw [gh1, gh2, gt]
+    exact Proof.wek P p  
+  . rename_i _ _ Q p; injection g with gh gt; injection gh with gh1 gh2; rw [gh1, gh2, gt]
+    exact Proof.com [] [] _ (Proof.wek Q p)
+  . rename_i _ P p; rw [← g] at p 
+    exact Proof.rdisjr P (lconj_inv p) 
+  . rename_i _ Q p; rw [← g] at p 
+    exact Proof.rdisjl Q (lconj_inv p) 
   . injection g; contradiction
   . sorry
 
 lemma ldisj_inv {Γ : List PropForm} {A B C: PropForm} : ((A ∨ B) :: Γ ⊢ C) → A :: Γ ⊢ C × B :: Γ ⊢ C := by  
   intro h; generalize g : (A ∨ B) :: Γ = Δ; rw [g] at h; cases h
-  . injection g with gh gt
-    rw [gt, ← gh]  
-    sorry
+  . injection g with gh gt; rw [gt, ← gh]  
+    exact (Proof.rdisjl B (Proof.id A), Proof.rdisjr A (Proof.id B))
   . injection g; contradiction
   . sorry
+  . rename_i _ _ p; injection g with _ gt; rw [gt]
+    exact (Proof.wek A p, Proof.wek B p) 
   . sorry
-  . sorry
-  . sorry
+  . rename_i _ _ p; rw [← g] at p
+    exact (Proof.rimpl (Proof.com [] [] _ (ldisj_inv (Proof.com [] [] _ p)).1), Proof.rimpl (Proof.com [] [] _ (ldisj_inv (Proof.com [] [] _ p)).2)) 
   . injection g; contradiction
-  . sorry
+  . rename_i _ _ p q; rw [← g] at p q 
+    exact ((Proof.rconj (ldisj_inv p).1 (ldisj_inv q).1), (Proof.rconj (ldisj_inv p).2 (ldisj_inv q).2))
   . injection g; contradiction
   . injection g; contradiction
-  . sorry
-  . sorry 
-  . sorry
+  . rename_i _ P p; rw [← g] at p
+    exact (Proof.rdisjr P (ldisj_inv p).1, Proof.rdisjr P (ldisj_inv p).2)
+  . rename_i _ Q p; rw [← g] at p
+    exact (Proof.rdisjl Q (ldisj_inv p).1, Proof.rdisjl Q (ldisj_inv p).2) 
+  . rename_i _ _ _ p q; injection g with gh gt; injection gh with gh1 gh2; rw [gt, gh1, gh2]
+    exact (p, q)
   . sorry
 
 --the main theorem 
